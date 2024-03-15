@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2024, STMicroelectronics - All Rights Reserved
+ * Copyright (C) 2018-2026, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
  */
@@ -1312,6 +1312,9 @@ static void __clk_enable(struct stm32mp1_clk_gate const *gate)
 	} else {
 		mmio_setbits_32(rcc_base + gate->offset, BIT(gate->bit));
 	}
+
+	/* Make sure the clock register has been written */
+	(void)mmio_read_32(rcc_base + gate->offset);
 }
 
 static void __clk_disable(struct stm32mp1_clk_gate const *gate)
@@ -1320,12 +1323,17 @@ static void __clk_disable(struct stm32mp1_clk_gate const *gate)
 
 	VERBOSE("Disable clock %u\n", gate->index);
 
+	dmbsy(); /* Ensure previous transactions are performed. */
+
 	if (gate->set_clr != 0U) {
 		mmio_write_32(rcc_base + gate->offset + RCC_MP_ENCLRR_OFFSET,
 			      BIT(gate->bit));
 	} else {
 		mmio_clrbits_32(rcc_base + gate->offset, BIT(gate->bit));
 	}
+
+	/* Make sure the clock register has been written */
+	(void)mmio_read_32(rcc_base + gate->offset);
 }
 
 static bool __clk_is_enabled(struct stm32mp1_clk_gate const *gate)

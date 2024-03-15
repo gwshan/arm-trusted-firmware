@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025, STMicroelectronics - All Rights Reserved
+ * Copyright (C) 2022-2026, STMicroelectronics - All Rights Reserved
  *
  * SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
  */
@@ -163,6 +163,9 @@ static int clk_gate_enable(struct stm32_clk_priv *priv, int id)
 
 	mmio_setbits_32(priv->base + cfg->offset, BIT(cfg->bit_idx));
 
+	/* Make sure the clock register has been written */
+	(void)mmio_read_32(priv->base + cfg->offset);
+
 	return 0;
 }
 
@@ -171,7 +174,12 @@ static void clk_gate_disable(struct stm32_clk_priv *priv, int id)
 	const struct clk_stm32 *clk = _clk_get(priv, id);
 	struct clk_gate_cfg *cfg = clk->clock_cfg;
 
+	dmbsy(); /* Ensure previous transactions are performed. */
+
 	mmio_clrbits_32(priv->base + cfg->offset, BIT(cfg->bit_idx));
+
+	/* Make sure the clock register has been written */
+	(void)mmio_read_32(priv->base + cfg->offset);
 }
 
 static bool clk_gate_is_enabled(struct stm32_clk_priv *priv, int id)
