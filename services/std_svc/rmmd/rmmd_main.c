@@ -201,6 +201,8 @@ int rmmd_setup(void)
 	struct rmm_manifest *manifest;
 	int rc;
 
+	INFO("==================== rmmd_setup ==================== \n");
+
 	/* Make sure RME is supported. */
 	assert(is_feat_rme_present());
 
@@ -340,7 +342,7 @@ uint64_t rmmd_rmi_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2,
 			smc_fid |= (FUNCID_SVE_HINT_MASK <<
 				    FUNCID_SVE_HINT_SHIFT);
 		}
-		VERBOSE("RMMD: RMI call from non-secure world.\n");
+		// INFO("[TF-A RMMD] RMI call 0x%08x from non-secure world\n", smc_fid);
 		return rmmd_smc_forward(NON_SECURE, REALM, smc_fid,
 					x1, x2, x3, x4, handle);
 	}
@@ -461,15 +463,21 @@ uint64_t rmmd_rmm_el3_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2,
 
 	switch (smc_fid) {
 	case RMM_GTSI_DELEGATE:
+		// INFO("[TF-A RMMD] RMM_GTSI_DELEGATE          0x%lx\n", x1);
 		ret = gpt_delegate_pas(x1, PAGE_SIZE_4KB, SMC_FROM_REALM);
 		SMC_RET1(handle, gpt_to_gts_error(ret, smc_fid, x1));
 	case RMM_GTSI_UNDELEGATE:
+		// INFO("[TF-A RMMD] RMM_GTSI_UNDELEGATE        0x%lx\n", x1);
 		ret = gpt_undelegate_pas(x1, PAGE_SIZE_4KB, SMC_FROM_REALM);
 		SMC_RET1(handle, gpt_to_gts_error(ret, smc_fid, x1));
 	case RMM_ATTEST_GET_PLAT_TOKEN:
+		// INFO("[TF-A RMMD] RMM_ATTEST_GET_PLAT_TOKEN  0x%lx 0x%lx 0x%lx\n",
+		//      x1, x2, x3);
 		ret = rmmd_attest_get_platform_token(x1, &x2, x3);
 		SMC_RET2(handle, ret, x2);
 	case RMM_ATTEST_GET_REALM_KEY:
+		// INFO("[TF-A RMMD] RMM_ATTEST_GET_REALM_KEY   0x%lx 0%lx 0x%lx\n",
+		//      x1, x2, x3);
 		ret = rmmd_attest_get_signing_key(x1, &x2, x3);
 		SMC_RET2(handle, ret, x2);
 
