@@ -201,6 +201,8 @@ int rmmd_setup(void)
 	struct rmm_manifest *manifest;
 	int rc;
 
+	INFO("==================== rmmd_setup ==================== \n");
+
 	/* Make sure RME is supported. */
 	assert(is_feat_rme_present());
 
