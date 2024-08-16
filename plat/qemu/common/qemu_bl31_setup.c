@@ -12,8 +12,12 @@
 #include <lib/transfer_list.h>
 #include <plat/common/platform.h>
 #if ENABLE_RME
+#ifdef PLAT_qemu
 #include <qemu_pas_def.h>
-#endif
+#elif PLAT_qemu_sbsa
+#include <qemu_sbsa_pas_def.h>
+#endif /* PLAT_qemu */
+#endif /* ENABLE_RME */
 #ifdef PLAT_qemu_sbsa
 #include <sbsa_platform_dt.h>
 #endif
@@ -117,21 +121,48 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 }
 
 #if ENABLE_RME
+#if PLAT_qemu
+/*
+ * The GPT library might modify the gpt regions structure to optimize
+ * the layout, so the array cannot be constant.
+ */
+static pas_region_t pas_regions[] = {
+	QEMU_PAS_ROOT,
+	QEMU_PAS_SECURE,
+	QEMU_PAS_GPTS,
+	QEMU_PAS_NS0,
+	QEMU_PAS_REALM,
+	QEMU_PAS_NS1,
+};
+
+void bl31_adjust_pas_regions() {}
+#elif PLAT_qemu_sbsa
+/*
+ * The GPT library might modify the gpt regions structure to optimize
+ * the layout, so the array cannot be constant.
+ */
+static pas_region_t pas_regions[] = {
+	QEMU_PAS_ROOT,
+	QEMU_PAS_SECURE,
+	QEMU_PAS_GPTS,
+	QEMU_PAS_REALM,
+	QEMU_PAS_NS0,
+};
+
+void bl31_adjust_pas_regions()
+{
+	int last  = (sizeof(pas_regions) / sizeof(pas_region_t)) - 1;
+	/* The SBSA platform has a single memory node */
+	memory_data data = sbsa_platform_dt_memory_node(0);
+
+	pas_regions[last].base_pa = data.addr_base;
+	pas_regions[last].size = data.addr_size;
+}
+#endif /* PLAT_qemu */
+
+
 static void bl31_plat_gpt_setup(void)
 {
-	/*
-	 * The GPT library might modify the gpt regions structure to optimize
-	 * the layout, so the array cannot be constant.
-	 */
-	pas_region_t pas_regions[] = {
-		QEMU_PAS_ROOT,
-		QEMU_PAS_SECURE,
-		QEMU_PAS_GPTS,
-		QEMU_PAS_NS0,
-		QEMU_PAS_REALM,
-		QEMU_PAS_NS1,
-	};
-
 	/*
 	 * Initialize entire protected space to GPT_GPI_ANY. With each L0 entry
 	 * covering 1GB (currently the only supported option), then covering
@@ -144,6 +175,8 @@ static void bl31_plat_gpt_setup(void)
 		ERROR("gpt_init_l0_tables() failed!\n");
 		panic();
 	}
+
+	bl31_adjust_pas_regions();
 
 	/* Carve out defined PAS ranges. */
 	if (gpt_init_pas_l1_tables(GPCCR_PGS_4K,
