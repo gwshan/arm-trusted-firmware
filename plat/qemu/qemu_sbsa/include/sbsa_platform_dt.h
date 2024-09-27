@@ -43,5 +43,13 @@ struct qemu_platform_info {
 };
 
 void sbsa_platform_dt_init(void);
+int sbsa_platform_dt_version_major(void);
+int sbsa_platform_dt_version_minor(void);
+uint32_t sbsa_platform_dt_num_cpus(void);
+uint32_t sbsa_platform_dt_num_memnodes(void);
+uint64_t sbsa_platform_dt_gic_its_addr(void);
+cpu_data sbsa_platform_dt_cpu_node(uint64_t index);
+memory_data sbsa_platform_dt_memory_node(uint64_t index);
+cpu_topology sbsa_platform_dt_cpu_topology(void);
 
 #endif /* SBSA_PLATFORM_DT_H */
