@@ -16,6 +16,9 @@
 #if ENABLE_RME
 #include <services/rmm_core_manifest.h>
 #endif
+#ifdef PLAT_qemu_sbsa
+#include <sbsa_platform_dt.h>
+#endif
 
 #include <plat/common/platform.h>
 #include "qemu_private.h"
@@ -241,11 +244,31 @@ static uint64_t checksum_calc(uint64_t *buffer, size_t size)
 	return sum;
 }
 
+#ifdef PLAT_qemu
+void plat_get_memory_node(int index, struct ns_dram_bank *bank_ptr)
+{
+	(void) index;
+	bank_ptr->base = NS_DRAM0_BASE;
+	bank_ptr->size = NS_DRAM0_SIZE;
+}
+#elif PLAT_qemu_sbsa
+void plat_get_memory_node(int index, struct ns_dram_bank *bank_ptr)
+{
+	memory_data data = {0, 0, 0};
+
+	if (index < PLATFORM_CORE_COUNT) {
+		data = sbsa_platform_dt_memory_node(index);
+	}
+
+	bank_ptr->base = data.addr_base;
+	bank_ptr->size = data.addr_size;
+}
+#endif /* PLAT_qemu */
+
 int plat_rmmd_load_manifest(struct rmm_manifest *manifest)
 {
+	int index = 0;
 	uint64_t checksum;
-	uintptr_t base;
-	uint64_t size;
 	size_t num_banks = 1;
 	size_t num_consoles = 1;
 	struct ns_dram_bank *bank_ptr;
@@ -317,10 +340,7 @@ int plat_rmmd_load_manifest(struct rmm_manifest *manifest)
 	/* Calculate checksum of plat_dram structure */
 	checksum = num_banks + (uint64_t)bank_ptr;
 
-	base = NS_DRAM0_BASE;
-	size = NS_DRAM0_SIZE;
-	bank_ptr[0].base = base;
-	bank_ptr[0].size = size;
+	plat_get_memory_node(index, &bank_ptr[index]);
 	checksum += checksum_calc((uint64_t *)bank_ptr,
 				  num_banks * sizeof(*bank_ptr));
 
