@@ -6,6 +6,7 @@
 
 #include <assert.h>
 
+#include <common/fdt_fixup.h>
 #include <common/fdt_wrappers.h>
 #include <common/runtime_svc.h>
 #include <libfdt.h>
@@ -330,7 +331,7 @@ void sip_svc_init(void)
 {
 	/* Read DeviceTree data before MMU is enabled */
 
-	void *dtb = (void *)(uintptr_t)ARM_PRELOADED_DTB_BASE;
+	void *dtb = dt_get_runtime_address();
 	int err;
 
 	err = fdt_open_into(dtb, dtb, PLAT_QEMU_DT_MAX_SIZE);

@@ -34,5 +34,6 @@ int fdt_adjust_gic_redist(void *dtb, unsigned int nr_cores, uintptr_t gicr_base,
 			  unsigned int gicr_frame_size);
 int fdt_set_mac_address(void *dtb, unsigned int ethernet_idx,
 			const uint8_t *mac_addr);
+void *dt_get_runtime_address(void);
 
 #endif /* FDT_FIXUP_H */

@@ -643,3 +643,25 @@ int fdt_set_mac_address(void *dtb, unsigned int ethernet_idx,
 
 	return fdt_setprop(dtb, node, "local-mac-address", mac_addr, 6);
 }
+
+/**
+ * dt_get_runtime_address() - Get the final location in RAM of the device tree
+ *
+ * For some platforms that support RME, the device tree is relocated from its
+ * original place at the beginning of the NS RAM to after the RMM.  This
+ * function returns the address of the final location in RAM of the device
+ * tree.  See function update_dt() in qemu_bl2_setup.c
+ *
+ * Return: The address of the final location in RAM of the device tree
+ */
+#if (ENABLE_RME && PLAT_qemu_sbsa)
+void *dt_get_runtime_address(void)
+{
+	return (void *)(uintptr_t)PLAT_QEMU_DT_BASE;
+}
+#else
+void *dt_get_runtime_address(void)
+{
+	return (void *)(uintptr_t)ARM_PRELOADED_DTB_BASE;
+}
+#endif /* (ENABLE_RME && PLAT_qemu_sbsa) */

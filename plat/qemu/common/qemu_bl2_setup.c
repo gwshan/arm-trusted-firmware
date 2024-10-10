@@ -81,8 +81,9 @@ static void update_dt(void)
 #endif
 	int ret;
 	void *fdt = (void *)(uintptr_t)ARM_PRELOADED_DTB_BASE;
+	void *dst = dt_get_runtime_address();
 
-	ret = fdt_open_into(fdt, fdt, PLAT_QEMU_DT_MAX_SIZE);
+	ret = fdt_open_into(fdt, dst, PLAT_QEMU_DT_MAX_SIZE);
 	if (ret < 0) {
 		ERROR("Invalid Device Tree at %p: error %d\n", fdt, ret);
 		return;
