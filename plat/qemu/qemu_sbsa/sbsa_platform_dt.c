@@ -274,6 +274,98 @@ void read_platform_version(void *dtb)
 	}
 }
 
+#if ENABLE_RME
+int set_system_memory_base(void *dtb, uintptr_t base)
+{
+	int len, prev, node, ret;
+	const fdt64_t *cur;
+	uintptr_t cur_base;
+	size_t size, delta;
+	const char *type;
+	fdt64_t new[2];
+
+	/*
+	 * QEMU gives us this DeviceTree node:
+	 *
+	 *	memory@100c0000000 {
+	 *		numa-node-id = <0x01>;
+	 *		reg = <0x100 0xc0000000 0x00 0x40000000>;
+	 *		device_type = "memory";
+	 *	};
+	 *
+	 *	memory@10000000000 {
+	 *		numa-node-id = <0x00>;
+	 *		reg = <0x100 0x00 0x00 0xc0000000>;
+	 *		device_type = "memory";
+	 *	}
+	 */
+
+	for (prev = 0;; prev = node) {
+		node = fdt_next_node(dtb, prev, NULL);
+		if (node < 0) {
+			return node;
+		}
+
+		type = fdt_getprop(dtb, node, "device_type", &len);
+		if (type && strncmp(type, "memory", len) == 0) {
+			break;
+		}
+	}
+
+	/*
+	 * Get the 'reg' property of this node and
+	 * assume two 8 bytes for base and size.
+	 */
+	cur = fdt_getprop(dtb, node, "reg", &len);
+	if (!cur || len < 0) {
+		return len;
+	}
+
+	if (len != (2 * sizeof(uint64_t))) {
+		return -FDT_ERR_BADVALUE;
+	}
+
+	cur_base = fdt64_to_cpu(*cur);
+	size = fdt64_to_cpu(*(cur + 1));
+
+	/*
+	 * QEMU gives us the base of the NS RAM, we can't go lower than that.
+	 */
+	if (base < cur_base) {
+		return -FDT_ERR_BADVALUE;
+	}
+
+	if (cur_base == base) {
+		return 0;
+	}
+
+	/*
+	 * The new base is higher than the base set by QEMU, i.e we are moving
+	 * the base memory up and shrinking the size.
+	 */
+	delta = (size_t)(base - cur_base);
+	size -= delta;
+
+	new[0] = cpu_to_fdt64(base);
+	new[1] = cpu_to_fdt64(size);
+
+	ret = fdt_setprop(dtb, node, "reg", new, len);
+	if (ret < 0) {
+		return ret;
+	}
+
+	return fdt_pack(dtb);
+}
+#else
+int set_system_memory_base(void *dtb, uintptr_t base)
+{
+	(void)dtb;
+	(void)base;
+
+	return 0;
+}
+#endif /* ENABLE_RME */
+
 void sbsa_platform_dt_init(void)
 {
 	/* Read DeviceTree data before MMU is enabled */
@@ -295,6 +387,11 @@ void sbsa_platform_dt_init(void)
 
 	read_platform_version(dtb);
 	INFO("Platform version: %d.%d\n", platform_version_major, platform_version_minor);
+
+	if(set_system_memory_base(dtb, NS_DRAM0_BASE)) {
+		ERROR("Failed to set system memory in Device Tree\n");
+		return;
+	}
 
 	read_platform_config_from_dt(dtb);
 	read_cpuinfo_from_dt(dtb);
