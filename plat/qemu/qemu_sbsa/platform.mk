@@ -30,6 +30,7 @@ $(eval $(call add_define,QEMU_LOAD_BL32))
 endif
 
 BL2_SOURCES		+=	$(LIBFDT_SRCS)
+BL2_SOURCES		+=	${FDT_WRAPPERS_SOURCES}
 
 # Include GICv3 driver files
 include drivers/arm/gic/v3/gicv3.mk
