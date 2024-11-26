@@ -559,6 +559,7 @@ static int clk_stm32_enable(unsigned long binding_id)
 
 	id = clk_get_index(priv, binding_id);
 	if (id == -EINVAL) {
+		ERROR("%s: unsupported clock id %lu\n", __func__, binding_id);
 		return id;
 	}
 
@@ -573,6 +574,8 @@ static void clk_stm32_disable(unsigned long binding_id)
 	id = clk_get_index(priv, binding_id);
 	if (id != -EINVAL) {
 		_clk_stm32_disable(priv, id);
+	} else {
+		ERROR("%s: unsupported clock id %lu\n", __func__, binding_id);
 	}
 }
 
@@ -583,6 +586,7 @@ static bool clk_stm32_is_enabled(unsigned long binding_id)
 
 	id = clk_get_index(priv, binding_id);
 	if (id == -EINVAL) {
+		ERROR("%s: unsupported clock id %lu\n", __func__, binding_id);
 		return false;
 	}
 
@@ -596,6 +600,7 @@ static unsigned long clk_stm32_get_rate(unsigned long binding_id)
 
 	id = clk_get_index(priv, binding_id);
 	if (id == -EINVAL) {
+		ERROR("%s: unsupported clock id %lu\n", __func__, binding_id);
 		return 0UL;
 	}
 
@@ -609,6 +614,7 @@ static int clk_stm32_get_parent(unsigned long binding_id)
 
 	id = clk_get_index(priv, binding_id);
 	if (id == -EINVAL) {
+		ERROR("%s: unsupported clock id %lu\n", __func__, binding_id);
 		return id;
 	}
 
