@@ -1558,9 +1558,17 @@ Common build options
    be used and for the platforms which use ``RESET_TO_BL31`` platform owners
    should have mechanism to authenticate BL31. This option defaults to 0.
 
--  ``ENABLE_RME``: Numeric value to enable support for the ARMv9 Realm
+-  ``ENABLE_RME``: Boolean flag to enable the Realm-EL2 payload (RMM). This will
+   take care of loading and initialising an image in Realm-EL2, and will at
+   runtime dispatch calls from non-secure world to the RMM, if applicable. Also
+   this will make BL2 run in EL3, so it has access to the new root address space.
+
+-  ``ENABLE_FEAT_RME``: Numeric value to enable support for the ARMv9 Realm
    Management Extension. This flag can take the values 0 to 2, to align with
    the ``ENABLE_FEAT`` mechanism. Default value is 0.
+   This flag solely controls the architectural bits of RME, to let TF-A run
+   in the "root" physical address space. For deploying a Realm-EL2 payload
+   (RMM), also set ENABLE_RME and provide an RMM image file.
 
 -  ``ENABLE_FEAT_MEC``: Numeric value to enable support for the ARMv9.2 Memory
    Encryption Contexts (MEC). This flag can take the values 0 to 2, to align

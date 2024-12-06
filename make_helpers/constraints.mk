@@ -8,16 +8,27 @@ ifneq ($(AARCH32_INSTRUCTION_SET),$(filter $(AARCH32_INSTRUCTION_SET),A32 T32))
          $(error Error: Unknown AArch32 instruction set ${AARCH32_INSTRUCTION_SET})
 endif
 
-# Make sure RME configuration is valid
-ifeq (${ENABLE_RME},1)
+# Make sure ENABLE_FEAT_RME configuration is valid
+ifneq (${ENABLE_FEAT_RME},0)
 	ifneq (${SEPARATE_CODE_AND_RODATA},1)
-                $(error ENABLE_RME requires SEPARATE_CODE_AND_RODATA)
+                $(error ENABLE_FEAT_RME requires SEPARATE_CODE_AND_RODATA)
 	endif
 
 	ifneq (${ARCH},aarch64)
-                $(error ENABLE_RME requires AArch64)
+                $(error ENABLE_FEAT_RME requires AArch64)
 	endif
 
+	ifeq ($(RESET_TO_BL2),0)
+		ifeq ($(ENABLE_FEAT_RME),2)
+                        $(warning ENABLE_FEAT_RME=2 forces BL2 to run at EL3 even if FEAT_RME is not present at runtime)
+		endif
+	endif
+
+        $(warning "FEAT_RME is an experimental feature")
+endif
+
+# Make sure RME configuration is valid
+ifeq (${ENABLE_RME},1)
 	ifeq ($(SPMC_AT_EL3),1)
                 $(error SPMC_AT_EL3 and ENABLE_RME cannot both be enabled.)
 	endif
@@ -28,6 +39,8 @@ ifeq (${ENABLE_RME},1)
 		endif
 	endif
 else
+# Currently RME gpt setup is done when ENABLE_RME=1, so ENABLE_FEAT_RME_GDI
+# depends on ENABLE_RME. todo: This will be later moved under ENABLE_FEAT_RME
 	ifeq (${ENABLE_FEAT_RME_GDI},1)
                 $(error ENABLE_FEAT_RME_GDI requires ENABLE_RME)
 	endif
@@ -251,6 +264,11 @@ ifeq (${ARM_XLAT_TABLES_LIB_V1}, 1)
                 $(error "ALLOW_RO_XLAT_TABLES requires translation tables \
                 library v2")
 	endif
+
+        ifneq (${ENABLE_FEAT_RME},0)
+                $(error "ENABLE_FEAT_RME requires version 2 of the Translation \
+                         Tables Library")
+        endif
 endif #(ARM_XLAT_TABLES_LIB_V1)
 
 ifneq (${DECRYPTION_SUPPORT},none)

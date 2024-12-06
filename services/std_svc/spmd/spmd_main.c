@@ -405,7 +405,7 @@ static uint64_t spmd_handle_group0_intr_swd(void *handle)
 		 FFA_PARAM_MBZ);
 }
 
-#if ENABLE_RME && SPMD_SPM_AT_SEL2 && !RESET_TO_BL31
+#if ENABLE_FEAT_RME && SPMD_SPM_AT_SEL2 && !RESET_TO_BL31
 static int spmd_dynamic_map_mem(uintptr_t base_addr, size_t size,
 				 unsigned int attr, uintptr_t *align_addr,
 				 size_t *align_size)
@@ -489,7 +489,7 @@ static void spmd_do_sec_cpy(uintptr_t root_base_addr, uintptr_t sec_base_addr,
 		panic();
 	}
 }
-#endif /* ENABLE_RME && SPMD_SPM_AT_SEL2 && !RESET_TO_BL31 */
+#endif /* ENABLE_FEAT_RME && SPMD_SPM_AT_SEL2 && !RESET_TO_BL31 */
 
 /*******************************************************************************
  * Loads SPMC manifest and inits SPMC.
@@ -589,7 +589,7 @@ static int spmd_spmc_init(void *pm_addr)
 					     DISABLE_ALL_EXCEPTIONS);
 	}
 
-#if ENABLE_RME && SPMD_SPM_AT_SEL2 && !RESET_TO_BL31
+#if ENABLE_FEAT_RME && SPMD_SPM_AT_SEL2 && !RESET_TO_BL31
 	image_info = FCONF_GET_PROPERTY(dyn_cfg, dtb, TOS_FW_CONFIG_ID);
 	assert(image_info != NULL);
 
@@ -607,7 +607,7 @@ static int spmd_spmc_init(void *pm_addr)
 	/* Update ep info of BL32 */
 	assert(spmc_ep_info != NULL);
 	spmc_ep_info->args.arg0 = image_info->secondary_config_addr;
-#endif /* ENABLE_RME && SPMD_SPM_AT_SEL2 && !RESET_TO_BL31 */
+#endif /* ENABLE_FEAT_RME && SPMD_SPM_AT_SEL2 && !RESET_TO_BL31 */
 
 	spmd_setup_context(plat_my_core_pos());
 

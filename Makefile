@@ -327,10 +327,12 @@ endif
 ################################################################################
 # RME dependent flags configuration, Enable optional features for RME.
 ################################################################################
-# FEAT_RME
 ifeq (${ENABLE_RME},1)
 	# RMM relies on SMCCC_ARCH_FEATURE_AVAILABILITY to discover EL3 enablement
 	ARCH_FEATURE_AVAILABILITY := 1
+
+	# Force set ENABLE_FEAT_RME to 1
+        override ENABLE_FEAT_RME := 1
 
 	# RME requires el2 context to be saved for now.
 	CTX_INCLUDE_EL2_REGS := 1
@@ -349,15 +351,10 @@ ifeq (${ENABLE_RME},1)
 	ENABLE_FEAT_CSV2_2 = 1
 	# Enable FIRME interface for CCA.
 	FIRME_SUPPORT := 1
-endif #(FEAT_RME)
 
-################################################################################
-# Include rmmd Makefile if RME is enabled
-################################################################################
-ifneq (${ENABLE_RME},0)
-include services/std_svc/rmmd/rmmd.mk
-$(warning "RME is an experimental feature")
-endif
+	# Include rmmd Makefile if RME is enabled
+        include services/std_svc/rmmd/rmmd.mk
+endif #(ENABLE_RME)
 
 ################################################################################
 # Make 128-Bit sysreg read/writes availabe when FEAT_D128 is enabled.
@@ -371,7 +368,7 @@ endif
 # 4 world system running BL2 at EL3 and two world system without BL1 running
 # BL2 in EL3
 
-ifneq ($(filter 1,${RESET_TO_BL2} ${ENABLE_RME}),)
+ifneq ($(filter 1 2,${RESET_TO_BL2} ${ENABLE_FEAT_RME}),)
 	BL2_RUNS_AT_EL3	:=	1
 else
 	BL2_RUNS_AT_EL3	:=	0
@@ -575,6 +572,7 @@ $(eval $(call assert_booleans,\
 	ENABLE_SME_FOR_SWD \
 	ENABLE_SVE_FOR_SWD \
 	ENABLE_FEAT_GCIE \
+	ENABLE_RME \
 	FFH_SUPPORT	\
 	ERROR_DEPRECATED \
 	FAULT_INJECTION_SUPPORT \
@@ -714,7 +712,7 @@ $(eval $(call assert_numerics,\
 	ENABLE_FEAT_MPAM \
 	ENABLE_FEAT_MPAM_PE_BW_CTRL \
 	ENABLE_FEAT_RAS	\
-	ENABLE_RME \
+	ENABLE_FEAT_RME \
 	ENABLE_SPE_FOR_NS \
 	ENABLE_SYS_REG_TRACE_FOR_NS \
 	ENABLE_SME_FOR_NS \
@@ -783,6 +781,7 @@ $(eval $(call add_defines,\
 	ENABLE_PIE \
 	ENABLE_PMF \
 	ENABLE_PSCI_STAT \
+	ENABLE_FEAT_RME \
 	ENABLE_RME \
 	RMM_V1_COMPAT \
 	RMMD_ENABLE_EL3_TOKEN_SIGN \

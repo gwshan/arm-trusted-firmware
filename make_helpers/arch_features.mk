@@ -436,6 +436,9 @@ ENABLE_FEAT_UINJ			?=	0
 #----
 
 # Flag to enable Realm Management Extension (FEAT_RME).
+ENABLE_FEAT_RME				?=	0
+
+# Flag to enable an RME payload
 ENABLE_RME				?=	0
 
 # Scalable Matrix Extension version 2 for non-secure world.
