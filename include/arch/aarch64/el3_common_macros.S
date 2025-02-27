@@ -66,6 +66,10 @@
 	 * ---------------------------------------------------------------------
 	 */
 	mov_imm	x0, SCR_RESET_VAL
+#ifdef SPD_spmd
+#error "SPD_spmd defined..."
+#endif
+
 #if IMAGE_BL31 && defined(SPD_spmd) && SPMD_SPM_AT_SEL2
 	mrs	x1, id_aa64pfr0_el1
 	and	x1, x1, #(ID_AA64PFR0_SEL2_MASK << ID_AA64PFR0_SEL2_SHIFT)
