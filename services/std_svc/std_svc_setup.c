@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2014-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -15,6 +15,7 @@
 #include <lib/runtime_instr.h>
 #include <services/drtm_svc.h>
 #include <services/errata_abi_svc.h>
+#include <services/firme_svc.h>
 #include <services/lfa_svc.h>
 #include <services/pci_svc.h>
 #include <services/rmmd_svc.h>
@@ -210,6 +211,13 @@ static uintptr_t std_svc_smc_handler(uint32_t smc_fid,
 	if (is_rmi_fid(smc_fid)) {
 		return rmmd_rmi_handler(smc_fid, x1, x2, x3, x4, cookie,
 					handle, flags);
+	}
+#endif
+
+#if FIRME_SUPPORT
+	if (is_firme_fid(smc_fid)) {
+		return firme_handler(smc_fid, x1, x2, x3, x4, cookie, handle,
+				     flags);
 	}
 #endif
 

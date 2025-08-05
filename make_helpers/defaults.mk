@@ -475,3 +475,6 @@ SUPPORT_SP_LIVE_ACTIVATION	:= 0
 # image_id. Test/CI only. Do not enable in production builds.
 TEST_IO_SHORT_READ_FI		:= 0
 TEST_IO_SHORT_READ_FI_IMAGE_ID	:= 0
+
+# Enable the FIRME interface.
+FIRME_SUPPORT			:= 0
