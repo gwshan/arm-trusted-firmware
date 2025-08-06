@@ -115,11 +115,11 @@ void prepare_dtb(void)
 		if (map_ret == 0) {
 			/* Return if no device tree is detected */
 			if (is_valid_dtb(dtb) == 0) {
-				if (dt_add_psci_node(dtb)) {
+				if (dt_add_psci_node(dtb) != 0) {
 					WARN("Failed to add PSCI Device Tree node\n");
 				}
 
-				if (dt_add_psci_cpu_enable_methods(dtb)) {
+				if (dt_add_psci_cpu_enable_methods(dtb) != 0) {
 					WARN("Failed to add PSCI cpu enable methods in DT\n");
 				}
 
