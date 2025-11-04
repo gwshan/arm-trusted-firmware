@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: BSD-3-Clause
  *
- * Copyright (c) 2019-2020, Linaro Limited and Contributors.
+ * Copyright (c) 2019-2025, Linaro Limited and Contributors.
  * All rights reserved.
  */
 
@@ -208,7 +208,7 @@
 #if SPM_MM
 #define MAX_MMAP_REGIONS		13
 #define MAX_XLAT_TABLES			13
-#elif ENABLE_RME
+#elif ENABLE_RMM
 #define MAX_MMAP_REGIONS		15
 #define MAX_XLAT_TABLES			15
 #else
@@ -421,10 +421,10 @@
 #define QEMU_PRI_BITS		2
 #define PLAT_SP_PRI		0x20
 
-#if !ENABLE_RME
+#if !ENABLE_RMM
 #define RME_GPT_DRAM_SIZE	0
 #define NS_DRAM0_BASE_OFFSET	0
-#else /* !ENABLE_RME */
+#else /* !ENABLE_RMM */
 /*
  * SBSA RAM starts at 1TB and we support up to 1TB of RAM.  As such we
  * have 2TB of physical address space to cover.  Since the GPT size can be
@@ -498,6 +498,6 @@ CASSERT((PLAT_QEMU_L0_GPT_BASE & (PLAT_QEMU_L0_GPT_SIZE - 1)) == 0,
 
 /* When RME is enabled, the base of NS DRAM is moved forward after the RMM */
 #define NS_DRAM0_BASE_OFFSET	REALM_DRAM_SIZE
-#endif /* !ENABLE_RME */
+#endif /* !ENABLE_RMM */
 
 #endif /* PLATFORM_DEF_H */

@@ -232,7 +232,7 @@ static void setup_secure_context(cpu_context_t *ctx, const struct entry_point_in
 	manage_extensions_secure(ctx);
 }
 
-#if ENABLE_RME && IMAGE_BL31
+#if ENABLE_RMM && IMAGE_BL31
 /******************************************************************************
  * This function performs initializations that are specific to REALM state
  * and updates the cpu context specified by 'ctx'.
@@ -304,7 +304,7 @@ static void setup_realm_context(cpu_context_t *ctx, const struct entry_point_inf
 		trbe_disable_realm(ctx);
 	}
 }
-#endif /* ENABLE_RME && IMAGE_BL31 */
+#endif /* ENABLE_RMM && IMAGE_BL31 */
 
 /******************************************************************************
  * This function performs initializations that are specific to NON-SECURE state
@@ -730,7 +730,7 @@ void cm_setup_context(cpu_context_t *ctx, const entry_point_info_t *ep)
 	case SECURE:
 		setup_secure_context(ctx, ep);
 		break;
-#if ENABLE_RME && IMAGE_BL31
+#if ENABLE_RMM && IMAGE_BL31
 	case REALM:
 		setup_realm_context(ctx, ep);
 		break;
@@ -887,7 +887,7 @@ static void manage_extensions_secure_per_world(void)
 
 static void manage_extensions_realm_per_world(void)
 {
-#if ENABLE_RME && IMAGE_BL31
+#if ENABLE_RMM && IMAGE_BL31
 	cm_el3_arch_init_per_world(&per_world_context[CPU_CONTEXT_REALM]);
 
 	if (is_feat_sve_supported()) {
@@ -926,7 +926,7 @@ static void manage_extensions_realm_per_world(void)
 	if (is_feat_idte3_supported()) {
 		idte3_init_cached_idregs_per_world(CPU_CONTEXT_REALM);
 	}
-#endif /* ENABLE_RME && IMAGE_BL31 */
+#endif /* ENABLE_RMM && IMAGE_BL31 */
 }
 
 void cm_manage_extensions_per_world(void)
@@ -942,9 +942,9 @@ void cm_init_percpu_once_regs(void)
 	if (is_feat_idte3_supported()) {
 		idte3_init_percpu_once_regs(CPU_CONTEXT_NS);
 		idte3_init_percpu_once_regs(CPU_CONTEXT_SECURE);
-#if ENABLE_RME
+#if ENABLE_RMM
 		idte3_init_percpu_once_regs(CPU_CONTEXT_REALM);
-#endif /* ENABLE_RME */
+#endif /* ENABLE_RMM */
 	}
 #endif /* IMAGE_BL31 */
 }

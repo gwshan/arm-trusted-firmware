@@ -19,8 +19,8 @@
 
 #include "gpt_rme_private.h"
 
-#if !ENABLE_RME
-#error "ENABLE_RME must be enabled to use the GPT library"
+#if !ENABLE_RMM
+#error "ENABLE_RMM must be enabled to use the GPT library"
 #endif
 
 /*

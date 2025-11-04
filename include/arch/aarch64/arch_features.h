@@ -15,7 +15,7 @@
 #include <lib/el3_runtime/context_mgmt.h>
 #include <lib/el3_runtime/cpu_data.h>
 
-#if ENABLE_RME
+#if ENABLE_RMM
 #define FEAT_ENABLE_ALL_WORLDS			\
 	((1u << CPU_CONTEXT_SECURE)	|	\
 	(1u << CPU_CONTEXT_NS)		|	\

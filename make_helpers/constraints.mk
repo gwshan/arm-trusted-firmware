@@ -8,6 +8,11 @@ ifneq ($(AARCH32_INSTRUCTION_SET),$(filter $(AARCH32_INSTRUCTION_SET),A32 T32))
          $(error Error: Unknown AArch32 instruction set ${AARCH32_INSTRUCTION_SET})
 endif
 
+# Check for ENABLE_RME that is replaced by ENABLE_FEAT_RME
+ifeq (${ENABLE_RME},1)
+        $(warning "ENABLE_RME will be deprecated. Use ENABLE_FEAT_RME instead.")
+endif
+
 # Make sure ENABLE_FEAT_RME configuration is valid
 ifneq (${ENABLE_FEAT_RME},0)
 	ifneq (${SEPARATE_CODE_AND_RODATA},1)
@@ -27,41 +32,47 @@ ifneq (${ENABLE_FEAT_RME},0)
         $(warning "FEAT_RME is an experimental feature")
 endif
 
-# Make sure RME configuration is valid
-ifeq (${ENABLE_RME},1)
+# Make sure RMM configuration is valid
+ifeq (${ENABLE_RMM},1)
+	ifneq (${ENABLE_FEAT_RME},1)
+                $(error ENABLE_RMM requires ENABLE_FEAT_RME=1)
+	endif
+
 	ifeq ($(SPMC_AT_EL3),1)
-                $(error SPMC_AT_EL3 and ENABLE_RME cannot both be enabled.)
+                $(error SPMC_AT_EL3 and ENABLE_RMM cannot both be enabled.)
 	endif
 
 	ifneq (${SPD}, none)
 		ifneq (${SPD}, spmd)
-                        $(error ENABLE_RME is incompatible with SPD=${SPD}. Use SPD=spmd)
+                        $(error ENABLE_RMM is incompatible with SPD=${SPD}. Use SPD=spmd)
 		endif
 	endif
+
+        $(warning "RMM is an experimental feature")
 else
-# Currently RME gpt setup is done when ENABLE_RME=1, so ENABLE_FEAT_RME_GDI
-# depends on ENABLE_RME. todo: This will be later moved under ENABLE_FEAT_RME
+# Currently RME gpt setup is done when ENABLE_RMM=1, so ENABLE_FEAT_RME_GDI
+# depends on ENABLE_RMM. todo: This will be later moved under ENABLE_FEAT_RME
 	ifeq (${ENABLE_FEAT_RME_GDI},1)
-                $(error ENABLE_FEAT_RME_GDI requires ENABLE_RME)
+                $(error ENABLE_FEAT_RME_GDI requires ENABLE_RMM)
 	endif
 endif
 
 ifeq (${CTX_INCLUDE_EL2_REGS}, 1)
 	ifeq (${SPD},none)
-		ifeq (${ENABLE_RME},0)
+		ifeq (${ENABLE_RMM},0)
                         $(error CTX_INCLUDE_EL2_REGS is available only when SPD \
-                        or RME is enabled)
+                        or RMM is enabled)
 		endif
 	endif
 endif
 
 ################################################################################
-# Verify FEAT_RME, FEAT_SCTLR2 and FEAT_TCR2 are enabled if FEAT_MEC is enabled.
+# Verify RMM, FEAT_SCTLR2 and FEAT_TCR2 are enabled if FEAT_MEC is enabled.
 ################################################################################
 
 ifneq (${ENABLE_FEAT_MEC},0)
-    ifeq (${ENABLE_RME},0)
-        $(error FEAT_RME must be enabled when FEAT_MEC is enabled.)
+    ifeq (${ENABLE_RMM},0)
+        $(error RMM must be enabled when FEAT_MEC is enabled.)
     endif
     ifeq (${ENABLE_FEAT_TCR2},0)
         $(error FEAT_TCR2 must be enabled when FEAT_MEC is enabled.)

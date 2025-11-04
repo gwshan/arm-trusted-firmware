@@ -101,7 +101,7 @@ static void update_dt(void)
 		return;
 	}
 
-#if ENABLE_RME
+#if ENABLE_RMM
 	if (fdt_add_reserved_memory(fdt, "rmm", REALM_DRAM_BASE,
 				    REALM_DRAM_SIZE)) {
 		ERROR("Failed to reserve RMM memory in Device Tree\n");
@@ -158,7 +158,7 @@ void bl2_plat_arch_setup(void)
 #if USE_COHERENT_MEM
 		MAP_BL_COHERENT_RAM,
 #endif
-#if ENABLE_RME
+#if ENABLE_RMM
 		MAP_RMM_DRAM,
 		MAP_GPT_L0_REGION,
 		MAP_GPT_L1_REGION,
@@ -168,18 +168,18 @@ void bl2_plat_arch_setup(void)
 
 	setup_page_tables(bl_regions, plat_qemu_get_mmap());
 
-#if ENABLE_RME
+#if ENABLE_RMM
 	/* BL2 runs in EL3 when RME enabled. */
 	assert(is_feat_rme_present());
 	enable_mmu_el3(0);
-#else /* ENABLE_RME */
+#else /* ENABLE_RMM */
 
 #ifdef __aarch64__
 	enable_mmu_el1(0);
 #else
 	enable_mmu_svc_mon(0);
 #endif
-#endif /* ENABLE_RME */
+#endif /* ENABLE_RMM */
 }
 
 /*******************************************************************************

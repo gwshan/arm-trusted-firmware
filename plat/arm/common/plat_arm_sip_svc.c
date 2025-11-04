@@ -13,7 +13,7 @@
 #include <plat/arm/common/arm_sip_svc.h>
 #include <plat/common/platform.h>
 
-#if ENABLE_RME && SPMD_SPM_AT_SEL2
+#if ENABLE_RMM && SPMD_SPM_AT_SEL2
 #include <lib/gpt_rme/gpt_rme.h>
 #endif
 
@@ -21,7 +21,7 @@
 #include <services/el3_spmd_logical_sp.h>
 #endif
 
-#if (ENABLE_RME == 1) && (defined(SPD_spmd) && SPMD_SPM_AT_SEL2 == 1)
+#if (ENABLE_RMM == 1) && (defined(SPD_spmd) && SPMD_SPM_AT_SEL2 == 1)
 static uint64_t plat_protect_memory(bool protect,
 				    bool secure_origin,
 				    const uint64_t base,
@@ -84,7 +84,7 @@ static uint64_t plat_protect_memory(bool protect,
 
 	SMC_RET1(handle, SMC_OK);
 }
-#endif /* ENABLE_RME  && SPMD_SPM_AT_SEL2 */
+#endif /* ENABLE_RMM  && SPMD_SPM_AT_SEL2 */
 
 uintptr_t plat_arm_sip_handler(uint32_t smc_fid,
 				u_register_t x1,
@@ -115,7 +115,7 @@ uintptr_t plat_arm_sip_handler(uint32_t smc_fid,
 		break; /* Not reached */
 #endif
 
-#if (ENABLE_RME == 1) && (defined(SPD_spmd) && SPMD_SPM_AT_SEL2 == 1)
+#if (ENABLE_RMM == 1) && (defined(SPD_spmd) && SPMD_SPM_AT_SEL2 == 1)
 	case PLAT_PROTECT_MEM_SMC64:
 		VERBOSE("Sip Call - Protect memory\n");
 		return plat_protect_memory(true, secure_origin, x1, x2, handle);

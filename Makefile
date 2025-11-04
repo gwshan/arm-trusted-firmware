@@ -266,6 +266,13 @@ ifneq (${SPD},none)
 	# over the sources.
 endif #(SPD=none)
 
+# Force set ENABLE_FEAT_RME and ENABLE_RMM to 1 until build option ENABLE_RME is
+# deprecated. constraints.mk prints a warning when this build option is used.
+ifeq (${ENABLE_RME},1)
+        override ENABLE_FEAT_RME := 1
+        override ENABLE_RMM := 1
+endif
+
 ################################################################################
 # Include the platform specific Makefile after the SPD Makefile (the platform
 # makefile may use all previous definitions in this file)
@@ -325,16 +332,13 @@ ifneq (${ENABLE_PAUTH},0)
 endif
 
 ################################################################################
-# RME dependent flags configuration, Enable optional features for RME.
+# RMM dependent flags configuration, Enable optional features for RMM.
 ################################################################################
-ifeq (${ENABLE_RME},1)
+ifeq (${ENABLE_RMM},1)
 	# RMM relies on SMCCC_ARCH_FEATURE_AVAILABILITY to discover EL3 enablement
 	ARCH_FEATURE_AVAILABILITY := 1
 
-	# Force set ENABLE_FEAT_RME to 1
-        override ENABLE_FEAT_RME := 1
-
-	# RME requires el2 context to be saved for now.
+	# RMM requires el2 context to be saved for now.
 	CTX_INCLUDE_EL2_REGS := 1
 	CTX_INCLUDE_AARCH32_REGS := 0
 	CTX_INCLUDE_PAUTH_REGS := 1
@@ -347,14 +351,14 @@ ifeq (${ENABLE_RME},1)
 		USE_SPINLOCK_CAS := 1
 	endif
 
-	# RME enables CSV2_2 extension by default.
+	# RMM enables CSV2_2 extension by default.
 	ENABLE_FEAT_CSV2_2 = 1
 	# Enable FIRME interface for CCA.
 	FIRME_SUPPORT := 1
 
-	# Include rmmd Makefile if RME is enabled
+	# Include rmmd Makefile if RMM is enabled
         include services/std_svc/rmmd/rmmd.mk
-endif #(ENABLE_RME)
+endif #(ENABLE_RMM)
 
 ################################################################################
 # Make 128-Bit sysreg read/writes availabe when FEAT_D128 is enabled.
@@ -572,7 +576,7 @@ $(eval $(call assert_booleans,\
 	ENABLE_SME_FOR_SWD \
 	ENABLE_SVE_FOR_SWD \
 	ENABLE_FEAT_GCIE \
-	ENABLE_RME \
+	ENABLE_RMM \
 	FFH_SUPPORT	\
 	ERROR_DEPRECATED \
 	FAULT_INJECTION_SUPPORT \
@@ -782,7 +786,7 @@ $(eval $(call add_defines,\
 	ENABLE_PMF \
 	ENABLE_PSCI_STAT \
 	ENABLE_FEAT_RME \
-	ENABLE_RME \
+	ENABLE_RMM \
 	RMM_V1_COMPAT \
 	RMMD_ENABLE_EL3_TOKEN_SIGN \
 	RMMD_ENABLE_IDE_KEY_PROG \

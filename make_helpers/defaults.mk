@@ -355,7 +355,7 @@ ENABLE_LTO			:= 0
 
 # This option will include EL2 registers in cpu context save and restore during
 # EL2 firmware entry/exit. Internal flag not meant for direct setting.
-# Use SPD=spmd and SPMD_SPM_AT_SEL2=1 or ENABLE_RME=1 to enable
+# Use SPD=spmd and SPMD_SPM_AT_SEL2=1 or ENABLE_RMM=1 to enable
 # CTX_INCLUDE_EL2_REGS.
 CTX_INCLUDE_EL2_REGS		:= 0
 
@@ -440,6 +440,9 @@ EARLY_CONSOLE			:= 0
 # Allow platforms to save/restore DSU PMU registers over a power cycle.
 # Disabled by default and must be enabled by individual platforms.
 PRESERVE_DSU_PMU_REGS		:= 0
+
+# Flag to enable an RME payload
+ENABLE_RMM			:= 0
 
 # Enable RMMD to forward attestation requests from RMM to EL3.
 RMMD_ENABLE_EL3_TOKEN_SIGN	:= 0

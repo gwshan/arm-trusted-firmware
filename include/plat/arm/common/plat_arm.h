@@ -57,7 +57,7 @@ typedef struct arm_gpt_info {
  *   - the remaining DRAM regions access from the given Non-Secure masters.
  ******************************************************************************/
 
-#if ENABLE_RME
+#if ENABLE_RMM
 #define ARM_TZC_RME_REGIONS_DEF						    \
 	{ARM_AP_TZC_DRAM1_BASE, ARM_AP_TZC_DRAM1_END, TZC_REGION_S_RDWR, 0},\
 	{ARM_EL3_TZC_DRAM1_BASE, ARM_L1_GPT_END, TZC_REGION_S_RDWR, 0},	    \
@@ -70,7 +70,7 @@ typedef struct arm_gpt_info {
 		PLAT_ARM_TZC_NS_DEV_ACCESS}
 #endif
 
-#if ENABLE_RME
+#if ENABLE_RMM
 #if (defined(SPD_tspd) || defined(SPD_opteed) || defined(SPD_spmd)) &&  \
 MEASURED_BOOT
 #define ARM_TZC_REGIONS_DEF					        \

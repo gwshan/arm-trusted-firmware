@@ -157,17 +157,18 @@
 
 #include <lib/cassert.h>
 
-#if ENABLE_RME
+#if ENABLE_RMM
 #define is_caller_non_secure(_f)	(((_f) & SMC_FROM_MASK) \
 					  == SMC_FROM_NON_SECURE)
 #define is_caller_secure(_f)		(((_f) & SMC_FROM_MASK) \
 					  == SMC_FROM_SECURE)
 #define is_caller_realm(_f)		(((_f) & SMC_FROM_MASK) \
 					  == SMC_FROM_REALM)
-#else /* ENABLE_RME */
+#else /* ENABLE_RMM */
 #define is_caller_non_secure(_f)	(((_f) & SMC_FROM_NON_SECURE) != U(0))
 #define is_caller_secure(_f)		(!is_caller_non_secure(_f))
-#endif /* ENABLE_RME */
+#endif /* ENABLE_RMM */
+
 #define caller_sec_state(_f)		((_f) & SMC_FROM_MASK)
 
 #define is_sve_hint_set(_f)		(((_f) & (FUNCID_SVE_HINT_MASK \

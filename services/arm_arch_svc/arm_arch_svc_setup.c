@@ -188,11 +188,11 @@ static uintptr_t smccc_arch_feature_availability(u_register_t reg,
 	} else if (is_caller_non_secure(flags)) {
 		security_state = NON_SECURE;
 	} else {
-#if ENABLE_RME
+#if ENABLE_RMM
 		security_state = REALM;
-#else /* !ENABLE_RME */
+#else /* !ENABLE_RMM */
 		assert(0); /* shouldn't be possible */
-#endif /* ENABLE_RME */
+#endif /* ENABLE_RMM */
 	}
 
 	caller_per_world_context = &per_world_context[get_cpu_context_index(security_state)];

@@ -73,11 +73,11 @@ uint32_t xlat_arch_get_pas(const xlat_ctx_t *ctx, uint32_t attr)
 
 		switch (pas) {
 		case MT_REALM:
-#if ENABLE_RME
+#if ENABLE_RMM
 			/* TTD.NSE = 1 and TTD.NS = 1 for Realm PAS */
 			return LOWER_ATTRS(EL3_S1_NSE | NS);
 #else
-			/* Do not support MT_REALM mapping when ENABLE_RME=0 */
+			/* Do not support MT_REALM mapping when ENABLE_RMM=0 */
 			panic();
 #endif
 		case MT_ROOT:

@@ -22,7 +22,7 @@ void plat_arm_security_setup(void)
 
 	const arm_tzc_regions_info_t fvp_tzc_regions[] = {
 		ARM_TZC_REGIONS_DEF,
-#if !ENABLE_RME
+#if !ENABLE_RMM
 		{FVP_DRAM3_BASE, FVP_DRAM3_END,
 		 ARM_TZC_NS_DRAM_S_ACCESS, PLAT_ARM_TZC_NS_DEV_ACCESS},
 		{FVP_DRAM4_BASE, FVP_DRAM4_END,

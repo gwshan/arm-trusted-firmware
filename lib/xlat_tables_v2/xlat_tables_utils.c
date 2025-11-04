@@ -114,7 +114,7 @@ static void xlat_desc_print(const xlat_ctx_t *ctx, uint64_t desc)
 			printf("-RT");
 			break;
 		case LOWER_ATTRS(EL3_S1_NSE | NS):
-#if ENABLE_RME
+#if ENABLE_RMM
 			printf("-RL");
 #else
 			assert(false);

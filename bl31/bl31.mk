@@ -167,7 +167,7 @@ ifeq ($(SMC_PCI_SUPPORT),1)
 BL31_SOURCES		+=	services/std_svc/pci_svc.c
 endif
 
-ifeq (${ENABLE_RME},1)
+ifeq (${ENABLE_RMM},1)
 include lib/gpt_rme/gpt_rme.mk
 
 BL31_SOURCES		+=	${GPT_LIB_SRCS}					\

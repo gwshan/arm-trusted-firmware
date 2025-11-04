@@ -95,7 +95,7 @@ int __init smmuv3_init(uintptr_t smmu_base)
 		return -1;
 	}
 
-#if ENABLE_RME
+#if ENABLE_RMM
 
 	if ((mmio_read_32(smmu_base + SMMU_ROOT_IDR0) &
 			  SMMU_ROOT_IDR0_ROOT_IMPL) == 0U) {
@@ -161,7 +161,7 @@ int __init smmuv3_init(uintptr_t smmu_base)
 		}
 	}
 
-#endif /* ENABLE_RME */
+#endif /* ENABLE_RMM */
 
 	return 0;
 }

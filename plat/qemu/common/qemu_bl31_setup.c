@@ -15,13 +15,13 @@
 #include <transfer_list.h>
 #endif
 #include <plat/common/platform.h>
-#if ENABLE_RME
+#if ENABLE_RMM
 #ifdef PLAT_qemu
 #include <qemu_pas_def.h>
 #elif PLAT_qemu_sbsa
 #include <qemu_sbsa_pas_def.h>
 #endif /* PLAT_qemu */
-#endif /* ENABLE_RME */
+#endif /* ENABLE_RMM */
 #ifdef PLAT_qemu_sbsa
 #include <sbsa_platform.h>
 #endif
@@ -50,7 +50,7 @@
 					MT_DEVICE | MT_RW | EL3_PAS)
 #endif
 
-#if ENABLE_RME
+#if ENABLE_RMM
 #if (RME_GPT_BITLOCK_BLOCK == 0)
 #define BITLOCK_BASE	UL(0)
 #define BITLOCK_SIZE	UL(0)
@@ -72,7 +72,7 @@ static bitlock_t gpt_bitlock[BITLOCKS_NUM];
 #define BITLOCK_BASE	(uintptr_t)gpt_bitlock
 #define BITLOCK_SIZE	sizeof(gpt_bitlock)
 #endif /* RME_GPT_BITLOCK_BLOCK */
-#endif /* ENABLE_RME */
+#endif /* ENABLE_RMM */
 
 /*
  * Placeholder variables for copying the arguments that have been passed to
@@ -80,7 +80,7 @@ static bitlock_t gpt_bitlock[BITLOCKS_NUM];
  */
 static entry_point_info_t bl32_image_ep_info;
 static entry_point_info_t bl33_image_ep_info;
-#if ENABLE_RME
+#if ENABLE_RMM
 static entry_point_info_t rmm_image_ep_info;
 #endif
 static struct transfer_list_header __maybe_unused *bl31_tl;
@@ -138,7 +138,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 		if (bl_params->image_id == BL32_IMAGE_ID)
 			bl32_image_ep_info = *bl_params->ep_info;
 
-#if ENABLE_RME
+#if ENABLE_RMM
 		if (bl_params->image_id == RMM_IMAGE_ID)
 			rmm_image_ep_info = *bl_params->ep_info;
 #endif
@@ -151,7 +151,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 
 	if (!bl33_image_ep_info.pc)
 		panic();
-#if ENABLE_RME
+#if ENABLE_RMM
 	if (!rmm_image_ep_info.pc)
 		panic();
 #endif
@@ -172,7 +172,7 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	bl31_tl = (void *)arg3; /* saved TL address from BL2 */
 }
 
-#if ENABLE_RME
+#if ENABLE_RMM
 #if PLAT_qemu
 /*
  * The GPT library might modify the gpt regions structure to optimize
@@ -273,7 +273,7 @@ void bl31_plat_arch_setup(void)
 #if USE_COHERENT_MEM
 		MAP_BL_COHERENT_RAM,
 #endif
-#if ENABLE_RME
+#if ENABLE_RMM
 		MAP_GPT_L0_REGION,
 		MAP_GPT_L1_REGION,
 		MAP_RMM_SHARED_MEM,
@@ -285,7 +285,7 @@ void bl31_plat_arch_setup(void)
 
 	enable_mmu_el3(0);
 
-#if ENABLE_RME
+#if ENABLE_RMM
 	/* Initialise and enable granule protection after MMU. */
 	bl31_plat_gpt_setup();
 
@@ -299,7 +299,7 @@ void bl31_plat_arch_setup(void)
 		ERROR("gpt_runtime_init() failed!\n");
 		panic();
 	}
-#endif /* ENABLE_RME */
+#endif /* ENABLE_RMM */
 
 }
 
@@ -336,7 +336,7 @@ entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)
 	if (type == NON_SECURE) {
 		next_image_info = &bl33_image_ep_info;
 	}
-#if ENABLE_RME
+#if ENABLE_RMM
 	else if (type == REALM) {
 		next_image_info = &rmm_image_ep_info;
 	}

@@ -210,7 +210,7 @@ endif
 BL32_RAM_LOCATION	:=	tdram
 ifeq (${BL32_RAM_LOCATION}, tsram)
   BL32_RAM_LOCATION_ID = SEC_SRAM_ID
-  ifeq (${ENABLE_RME},1)
+  ifeq (${ENABLE_RMM},1)
 	# Avoid overlap between BL2 and BL32 to ease GPT partition
 	$(error "With RME, BL32 must use secure DRAM")
   endif

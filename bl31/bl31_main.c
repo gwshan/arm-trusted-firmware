@@ -52,7 +52,7 @@ static int32_t (*bl32_init)(void);
 /*****************************************************************************
  * Function used to initialise RMM if RME is enabled
  *****************************************************************************/
-#if ENABLE_RME
+#if ENABLE_RMM
 static int32_t (*rmm_init)(void);
 #endif
 
@@ -204,7 +204,7 @@ void __no_pauth bl31_main(u_register_t arg0, u_register_t arg1, u_register_t arg
 	 * If RME is enabled and init hook is registered, initialize RMM
 	 * in R-EL2.
 	 */
-#if ENABLE_RME
+#if ENABLE_RMM
 	if (rmm_init != NULL) {
 		INFO("BL31: Initializing RMM\n");
 
@@ -250,7 +250,7 @@ void __no_pauth bl31_warmboot(void)
 	/* Init registers that never change for the lifetime of the core. */
 	cm_manage_extensions_el3(core_pos);
 
-#if ENABLE_RME
+#if ENABLE_RMM
 	/*
 	 * At warm boot GPT data structures have already been initialized in RAM
 	 * but the sysregs for this CPU need to be initialized. Note that the GPT
@@ -343,7 +343,7 @@ void bl31_register_bl32_init(int32_t (*func)(void))
 	bl32_init = func;
 }
 
-#if ENABLE_RME
+#if ENABLE_RMM
 /*******************************************************************************
  * This function initializes the pointer to RMM init function. This is expected
  * to be called by the RMMD after it finishes all its initialization

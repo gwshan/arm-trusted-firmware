@@ -156,10 +156,10 @@ defined(SPD_spmd))
 	ARM_MAP_EVENT_LOG_DRAM1,
 #endif /* MEASURED_BOOT && (SPD_tspd || SPD_opteed || SPD_spmd) */
 
-#if ENABLE_RME
+#if ENABLE_RMM
 	ARM_MAP_RMM_DRAM,
 	ARM_MAP_GPT_L1_DRAM,
-#endif /* ENABLE_RME */
+#endif /* ENABLE_RMM */
 #ifdef SPD_tspd
 	ARM_MAP_TSP_SEC_MEM,
 #endif
@@ -221,7 +221,7 @@ const mmap_region_t plat_arm_mmap[] = {
 #if SPM_MM
 	ARM_SPM_BUF_EL3_MMAP,
 #endif
-#if ENABLE_RME
+#if ENABLE_RMM
 	ARM_MAP_GPT_L1_DRAM,
 	ARM_MAP_EL3_RMM_SHARED_MEM,
 #endif
@@ -591,7 +591,7 @@ int32_t plat_get_soc_name(char *soc_name)
 			plat_get_soc_revision());
 	return SMC_ARCH_CALL_SUCCESS;
 }
-#if ENABLE_RME
+#if ENABLE_RMM
 
 /* BDF mappings for RP0 RC0 */
 const struct bdf_mapping_info rc0rp0_bdf_data[] = {
@@ -1049,4 +1049,4 @@ int plat_rmmd_mecid_key_update(uint16_t mecid, unsigned int reason)
 	 */
 	return 0;
 }
-#endif /* ENABLE_RME */
+#endif /* ENABLE_RMM */

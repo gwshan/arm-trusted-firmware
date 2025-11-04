@@ -14,7 +14,7 @@ ifeq (${ARCH},aarch64)
 BL2_SOURCES		+=	common/aarch64/early_exceptions.S
 endif
 
-ifeq (${ENABLE_RME},1)
+ifeq (${ENABLE_RMM},1)
 include lib/gpt_rme/gpt_rme.mk
 
 BL2_SOURCES		+=	${GPT_LIB_SRCS}

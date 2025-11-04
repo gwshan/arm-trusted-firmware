@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2026, BayLibre SAS
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -329,7 +329,7 @@
 #define MAX_XLAT_TABLES_SPMC		0
 #endif
 
-#if ENABLE_RME
+#if ENABLE_RMM
 
 /*
  * Reserve some space at the end of secure DRAM for the Granule Protection
@@ -388,10 +388,10 @@ CASSERT((PLAT_QEMU_L0_GPT_BASE & (PLAT_QEMU_L0_GPT_SIZE - 1)) == 0,
 					RMM_SHARED_BASE,		\
 					RMM_SHARED_SIZE,		\
 					MT_MEMORY | MT_RW | MT_REALM)
-#else /* !ENABLE_RME */
+#else /* !ENABLE_RMM */
 
 #define RME_GPT_DRAM_SIZE		0
 
-#endif /* ENABLE_RME */
+#endif /* ENABLE_RMM */
 
 #endif /* PLATFORM_DEF_H */
