@@ -158,8 +158,10 @@ defined(SPD_spmd))
 
 #if ENABLE_RMM
 	ARM_MAP_RMM_DRAM,
-	ARM_MAP_GPT_L1_DRAM,
 #endif /* ENABLE_RMM */
+#if ENABLE_FEAT_RME
+	ARM_MAP_GPT_L1_DRAM,
+#endif
 #ifdef SPD_tspd
 	ARM_MAP_TSP_SEC_MEM,
 #endif
@@ -221,8 +223,10 @@ const mmap_region_t plat_arm_mmap[] = {
 #if SPM_MM
 	ARM_SPM_BUF_EL3_MMAP,
 #endif
-#if ENABLE_RMM
+#if ENABLE_FEAT_RME
 	ARM_MAP_GPT_L1_DRAM,
+#endif
+#if ENABLE_RMM
 	ARM_MAP_EL3_RMM_SHARED_MEM,
 #endif
 #ifdef MAP_FW_NS_HANDOFF

@@ -49,7 +49,7 @@
  * Protected memory range is one whose PAS was made secure.
  * Unprotect relates to reverting a protect operation.
  */
-#if SPMD_SPM_AT_SEL2 && ENABLE_RMM
+#if SPMD_SPM_AT_SEL2
 #define PLAT_PROTECT_MEM_SMC64 0xC2000101
 #define PLAT_UNPROTECT_MEM_SMC64 0xC2000102
 #endif

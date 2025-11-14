@@ -57,9 +57,12 @@
 
 #define PLAT_ARM_RMM_PAYLOAD_SIZE	UL(0x600000)	/* 2 * 3MB */
 
+#endif /* ENABLE_RMM */
+
+#if ENABLE_FEAT_RME
 /* Protected physical address size */
 #define PLAT_ARM_PPS			(SZ_1T)
-#endif /* ENABLE_RMM */
+#endif
 
 /*
  * Max size of SPMC is 16MB for fvp. With SPMD enabled this value corresponds to

@@ -250,15 +250,17 @@ void __no_pauth bl31_warmboot(void)
 	/* Init registers that never change for the lifetime of the core. */
 	cm_manage_extensions_el3(core_pos);
 
-#if ENABLE_RMM
 	/*
 	 * At warm boot GPT data structures have already been initialized in RAM
 	 * but the sysregs for this CPU need to be initialized. Note that the GPT
 	 * accesses are controlled attributes in GPCCR and do not depend on the
 	 * SCR_EL3.C bit.
 	 */
-	if (gpt_enable() != 0) {
-		panic();
+#if ENABLE_FEAT_RME
+	if (is_feat_rme_supported()) {
+		if (gpt_enable() != 0) {
+			panic();
+		}
 	}
 #endif
 

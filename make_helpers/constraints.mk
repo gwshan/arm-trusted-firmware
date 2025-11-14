@@ -10,7 +10,7 @@ endif
 
 # Check for ENABLE_RME that is replaced by ENABLE_FEAT_RME
 ifeq (${ENABLE_RME},1)
-        $(warning "ENABLE_RME will be deprecated. Use ENABLE_FEAT_RME instead.")
+        $(warning "ENABLE_RME will be deprecated. Use ENABLE_FEAT_RME=1 and ENABLE_RMM=1 instead.")
 endif
 
 # Make sure ENABLE_FEAT_RME configuration is valid
@@ -29,7 +29,25 @@ ifneq (${ENABLE_FEAT_RME},0)
 		endif
 	endif
 
+	ifeq ($(SPMC_AT_EL3),1)
+                $(error SPMC_AT_EL3 and ENABLE_FEAT_RME cannot both be enabled.)
+	endif
+
+	ifneq (${SPD}, none)
+		ifneq (${SPD}, spmd)
+                        $(error ENABLE_FEAT_RME is incompatible with SPD=${SPD}. Use SPD=spmd)
+		endif
+	endif
+
+	ifeq ($(SPM_MM),1)
+                $(error SPM_MM and ENABLE_FEAT_RME cannot both be enabled.)
+	endif
+
         $(warning "FEAT_RME is an experimental feature")
+else
+	ifeq (${ENABLE_FEAT_RME_GDI},1)
+                $(error ENABLE_FEAT_RME_GDI requires ENABLE_FEAT_RME)
+	endif
 endif
 
 # Make sure RMM configuration is valid
@@ -38,23 +56,7 @@ ifeq (${ENABLE_RMM},1)
                 $(error ENABLE_RMM requires ENABLE_FEAT_RME=1)
 	endif
 
-	ifeq ($(SPMC_AT_EL3),1)
-                $(error SPMC_AT_EL3 and ENABLE_RMM cannot both be enabled.)
-	endif
-
-	ifneq (${SPD}, none)
-		ifneq (${SPD}, spmd)
-                        $(error ENABLE_RMM is incompatible with SPD=${SPD}. Use SPD=spmd)
-		endif
-	endif
-
         $(warning "RMM is an experimental feature")
-else
-# Currently RME gpt setup is done when ENABLE_RMM=1, so ENABLE_FEAT_RME_GDI
-# depends on ENABLE_RMM. todo: This will be later moved under ENABLE_FEAT_RME
-	ifeq (${ENABLE_FEAT_RME_GDI},1)
-                $(error ENABLE_FEAT_RME_GDI requires ENABLE_RMM)
-	endif
 endif
 
 ifeq (${CTX_INCLUDE_EL2_REGS}, 1)

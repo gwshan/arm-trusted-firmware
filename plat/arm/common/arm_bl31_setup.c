@@ -39,10 +39,9 @@ static entry_point_info_t bl33_image_ep_info;
 
 #if ENABLE_RMM
 static entry_point_info_t rmm_image_ep_info;
-#if (RME_GPT_BITLOCK_BLOCK == 0)
-#define BITLOCK_BASE	UL(0)
-#define BITLOCK_SIZE	UL(0)
-#else
+#endif
+
+#if ENABLE_FEAT_RME && (RME_GPT_BITLOCK_BLOCK != 0)
 /*
  * Number of bitlock_t entries in bitlocks array for PLAT_ARM_PPS
  * with RME_GPT_BITLOCK_BLOCK * 512MB per bitlock.
@@ -59,8 +58,10 @@ static entry_point_info_t rmm_image_ep_info;
 static bitlock_t gpt_bitlock[BITLOCKS_NUM];
 #define BITLOCK_BASE	(uintptr_t)gpt_bitlock
 #define BITLOCK_SIZE	sizeof(gpt_bitlock)
-#endif /* RME_GPT_BITLOCK_BLOCK */
-#endif /* ENABLE_RMM */
+#else /* !(ENABLE_FEAT_RME && (RME_GPT_BITLOCK_BLOCK != 0)) */
+#define BITLOCK_BASE	UL(0)
+#define BITLOCK_SIZE	UL(0)
+#endif /* ENABLE_FEAT_RME && (RME_GPT_BITLOCK_BLOCK != 0) */
 
 #if !RESET_TO_BL31
 /*
@@ -510,7 +511,7 @@ void __init arm_bl31_plat_arch_setup(void)
 {
 	const mmap_region_t bl_regions[] = {
 		MAP_BL31_TOTAL,
-#if ENABLE_RMM
+#if ENABLE_FEAT_RME
 		ARM_MAP_L0_GPT_REGION,
 #endif
 #if RECLAIM_INIT_CODE
@@ -534,25 +535,33 @@ void __init arm_bl31_plat_arch_setup(void)
 
 	enable_mmu_el3(0);
 
-#if ENABLE_RMM
-#if RESET_TO_BL31
-	/*  initialize GPT only when RME is enabled. */
-	assert(is_feat_rme_present());
-
-	/* Initialise and enable granule protection after MMU. */
-	arm_gpt_setup();
-#endif /* RESET_TO_BL31 */
 	/*
 	 * Initialise Granule Protection library and enable GPC for the primary
 	 * processor. The tables have already been initialized by a previous BL
 	 * stage, so there is no need to provide any PAS here. This function
 	 * sets up pointers to those tables.
+	 *
+	 * Although FEAT_RME supports feature detection, a build with
+	 * ENABLE_FEAT_RME=0 and -O0 (no optimization) fails due to undefined
+	 * reference to gpt library calls as the compiler doesn't optimise the
+	 * check done using is_feat_rme_supported(). So calls to gpt library
+	 * are gated using ENABLE_FEAT_RME.
 	 */
-	if (gpt_runtime_init(BITLOCK_BASE, BITLOCK_SIZE) < 0) {
-		ERROR("gpt_runtime_init() failed!\n");
-		panic();
+#if ENABLE_FEAT_RME
+	if (is_feat_rme_supported()) {
+		assert(is_feat_rme_present());
+
+#if RESET_TO_BL31
+		/* Initialise and enable granule protection after MMU. */
+		arm_gpt_setup();
+#endif /* RESET_TO_BL31 */
+
+		if (gpt_runtime_init(BITLOCK_BASE, BITLOCK_SIZE) < 0) {
+			ERROR("gpt_runtime_init() failed!\n");
+			panic();
+		}
 	}
-#endif /* ENABLE_RMM */
+#endif /* ENABLE_FEAT_RME */
 
 	arm_setup_romlib();
 

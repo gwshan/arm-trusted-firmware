@@ -95,11 +95,18 @@ int __init smmuv3_init(uintptr_t smmu_base)
 		return -1;
 	}
 
-#if ENABLE_RMM
+	/*
+	 * For RME-enabled systems, the platform layer is responsible for
+	 * providing the SMMU root register offset. If the offset is not
+	 * provided, GPC checks are not enabled. If provided, a runtime
+	 * validation is performed to confirm its availability and activate GPC
+	 * checks.
+	 */
+#if defined(__aarch64__) && defined(PLAT_ARM_SMMUV3_ROOT_REG_OFFSET)
 
 	if ((mmio_read_32(smmu_base + SMMU_ROOT_IDR0) &
 			  SMMU_ROOT_IDR0_ROOT_IMPL) == 0U) {
-		WARN("Skip SMMU GPC configuration.\n");
+		VERBOSE("Skip SMMU GPC configuration.\n");
 	} else {
 		uint64_t gpccr_el3 = read_gpccr_el3();
 		uint64_t gptbr_el3 = read_gptbr_el3();
@@ -161,7 +168,7 @@ int __init smmuv3_init(uintptr_t smmu_base)
 		}
 	}
 
-#endif /* ENABLE_RMM */
+#endif /* __aarch64__ && PLAT_ARM_SMMUV3_ROOT_REG_OFFSET */
 
 	return 0;
 }

@@ -331,6 +331,13 @@ ifneq (${ENABLE_PAUTH},0)
 	BL_COMMON_SOURCES	+=	lib/extensions/pauth/pauth.c
 endif
 
+ifneq (${ENABLE_FEAT_RME},0)
+        # bitlocks are only useful with atomics
+	ifneq ($(RME_GPT_BITLOCK_BLOCK), 0)
+		USE_SPINLOCK_CAS := 1
+	endif
+endif
+
 ################################################################################
 # RMM dependent flags configuration, Enable optional features for RMM.
 ################################################################################
@@ -345,10 +352,6 @@ ifeq (${ENABLE_RMM},1)
 
 	ifneq ($(ENABLE_FEAT_MPAM), 0)
 		CTX_INCLUDE_MPAM_REGS := 1
-	endif
-	# bitlocks are only useful with atomics
-	ifneq ($(RME_GPT_BITLOCK_BLOCK), 0)
-		USE_SPINLOCK_CAS := 1
 	endif
 
 	# RMM enables CSV2_2 extension by default.

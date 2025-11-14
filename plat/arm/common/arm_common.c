@@ -238,7 +238,7 @@ const mmap_region_t *plat_get_addr_mmap(void)
 	return plat_arm_mmap;
 }
 
-#if ENABLE_RMM
+#if ENABLE_FEAT_RME
 void arm_gpt_setup(void)
 {
 	/*
@@ -276,4 +276,4 @@ void arm_gpt_setup(void)
 		panic();
 	}
 }
-#endif /* ENABLE_RMM */
+#endif /* ENABLE_FEAT_RME */
