@@ -881,8 +881,7 @@
 #define TFP_BIT			(U(1) << 10)
 #define CPTR_EZ_BIT		(U(1) << 8)
 /* TCPAC is always set by default as the register is always present */
-#define CPTR_EL3_RESET_VAL	((TAM_BIT | TTA_BIT) & \
-				~(CPTR_EZ_BIT | ESM_BIT | TFP_BIT | TCPAC_BIT))
+#define CPTR_EL3_RESET_VAL	UL(0x0)
 
 /* CPTR_EL2 definitions */
 #define CPTR_EL2_RES1		((U(1) << 13) | (U(1) << 12) | (U(0x3ff)))
