@@ -30,13 +30,6 @@
 struct transfer_list_header *secure_tl;
 struct transfer_list_header *ns_tl __unused;
 
-#if USE_GIC_DRIVER == 3
-uintptr_t arm_gicr_base_addrs[2] = {
-	PLAT_ARM_GICR_BASE,	/* GICR Base address of the primary CPU */
-	0U			/* Zero Termination */
-};
-#endif
-
 /*
  * Placeholder variables for copying the arguments that have been passed to
  * BL31 from BL2.
