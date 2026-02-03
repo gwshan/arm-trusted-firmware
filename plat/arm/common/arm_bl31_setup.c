@@ -493,10 +493,6 @@ void arm_free_init_memory(void)
 void __init bl31_platform_setup(void)
 {
 	arm_bl31_platform_setup();
-
-#if USE_GIC_DRIVER == 3
-	gic_set_gicr_frames(arm_gicr_base_addrs);
-#endif
 }
 
 void bl31_plat_runtime_setup(void)
@@ -596,4 +592,8 @@ void __init arm_bl31_plat_arch_setup(void)
 void __init bl31_plat_arch_setup(void)
 {
 	arm_bl31_plat_arch_setup();
+
+#if USE_GIC_DRIVER == 3
+	gic_set_gicr_frames(arm_gicr_base_addrs);
+#endif
 }
