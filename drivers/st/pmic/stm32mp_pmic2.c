@@ -480,6 +480,10 @@ static int register_pmic2(void)
 			bool high;
 
 			ret = stpmic2_is_buck1_high_voltage(pmic2, &high);
+			if (ret != 0) {
+				ERROR("Failed to get buck1 info\n");
+				return ret;
+			}
 			if (high) {
 				reg_name = "buck1h";
 			}
