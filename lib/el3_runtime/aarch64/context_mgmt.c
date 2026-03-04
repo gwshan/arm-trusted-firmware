@@ -158,6 +158,8 @@ static void setup_el2_context(cpu_context_t *ctx)
 	 * Some registers' disabled init value is all zeroes which is carried
 	 * forward from init. These are:
 	 *  * HCRX_EL2
+	 *  * TCR2_EL2
+	 *  * HAFGRTR_EL2
 	 */
 	if (is_feat_fgt_supported()) {
 		write_el2_ctx_fgt(el2_ctx, hfgitr_el2, HFGITR_EL2_INIT_VAL);
@@ -188,6 +190,14 @@ static void setup_el2_regs(void)
 		write_hfgitr_el2(HFGITR_EL2_INIT_VAL);
 		write_hfgrtr_el2(HFGRTR_EL2_INIT_VAL);
 		write_hfgwtr_el2(HFGWTR_EL2_INIT_VAL);
+	}
+
+	if (is_feat_tcr2_supported()) {
+		write_tcr2_el2(TCR2_EL2_INIT_VAL);
+	}
+
+	if (is_feat_fgt_supported() && is_feat_amu_supported()) {
+		write_hafgrtr_el2(HAFGRTR_EL2_INIT_VAL);
 	}
  #endif
 }
