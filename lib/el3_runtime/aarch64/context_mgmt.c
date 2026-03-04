@@ -151,17 +151,45 @@ static void setup_el2_context(cpu_context_t *ctx)
 	 * As their value is zeroed at init, there is a chance that this can
 	 * lead to unexpected behavior in lower ELs that do not initialise these
 	 * registers themselves.
+	 *
+	 * NOTE: this is duplicate, and mutually exclusive, of the same writes
+	 * to setup_el2_regs(). They must be kept in sync.
+	 *
+	 * Some registers' disabled init value is all zeroes which is carried
+	 * forward from init. These are:
+	 *  * HCRX_EL2
 	 */
-	if (is_feat_hcx_supported()) {
-		write_el2_ctx_hcx(el2_ctx, hcrx_el2, HCRX_EL2_INIT_VAL);
-	}
-
 	if (is_feat_fgt_supported()) {
 		write_el2_ctx_fgt(el2_ctx, hfgitr_el2, HFGITR_EL2_INIT_VAL);
 		write_el2_ctx_fgt(el2_ctx, hfgrtr_el2, HFGRTR_EL2_INIT_VAL);
 		write_el2_ctx_fgt(el2_ctx, hfgwtr_el2, HFGWTR_EL2_INIT_VAL);
 	}
 #endif
+}
+
+/*
+ * Write safe values into EL2 registers that reset into an UNKNOWN state.
+ *
+ * As their value is UNKNOWN at init, there is a chance that this can lead to
+ * unexpected behavior in lower ELs that do not initialise these registers
+ * themselves.
+ *
+ * NOTE: this is duplicate, and mutually exclusive, of the same writes to
+ * setup_el2_context(). They must be kept in sync.
+ */
+static void setup_el2_regs(void)
+{
+#if !(CTX_INCLUDE_EL2_REGS && IMAGE_BL31)
+	if (is_feat_hcx_supported()) {
+		write_hcrx_el2(HCRX_EL2_INIT_VAL);
+	}
+
+	if (is_feat_fgt_supported()) {
+		write_hfgitr_el2(HFGITR_EL2_INIT_VAL);
+		write_hfgrtr_el2(HFGRTR_EL2_INIT_VAL);
+		write_hfgwtr_el2(HFGWTR_EL2_INIT_VAL);
+	}
+ #endif
 }
 
 /******************************************************************************
@@ -1178,32 +1206,7 @@ void cm_prepare_el3_exit(size_t security_state)
 						 CTX_SCR_EL3);
 
 		if (el2_implemented != EL_IMPL_NONE) {
-
-			/*
-			 * If context is not being used for EL2, initialize
-			 * HCRX_EL2 with its init value here.
-			 */
-			if (is_feat_hcx_supported()) {
-				write_hcrx_el2(HCRX_EL2_INIT_VAL);
-			}
-
-			/*
-			 * Initialize Fine-grained trap registers introduced
-			 * by FEAT_FGT so all traps are initially disabled when
-			 * switching to EL2 or a lower EL, preventing undesired
-			 * behavior.
-			 */
-			if (is_feat_fgt_supported()) {
-				/*
-				 * Initialize HFG*_EL2 registers with a default
-				 * value so legacy systems unaware of FEAT_FGT
-				 * do not get trapped due to their lack of
-				 * initialization for this feature.
-				 */
-				write_hfgitr_el2(HFGITR_EL2_INIT_VAL);
-				write_hfgrtr_el2(HFGRTR_EL2_INIT_VAL);
-				write_hfgwtr_el2(HFGWTR_EL2_INIT_VAL);
-			}
+			setup_el2_regs();
 
 			/* Condition to ensure EL2 is being used. */
 			if ((scr_el3 & SCR_HCE_BIT) != 0U) {
