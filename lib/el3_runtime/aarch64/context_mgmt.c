@@ -118,6 +118,51 @@ static void setup_el1_context(cpu_context_t *ctx, const struct entry_point_info 
 #endif /* (IMAGE_BL1) || (IMAGE_BL31 && (!CTX_INCLUDE_EL2_REGS)) */
 }
 
+/*
+ * The lower-EL context is zeroed so that no stale values leak to a world.
+ * It is assumed that an all-zero lower-EL context is good enough for it
+ * to boot correctly. However, there are very few registers where this
+ * is not true and some values need to be (re)created.
+ */
+static void setup_el2_context(cpu_context_t *ctx)
+{
+#if CTX_INCLUDE_EL2_REGS && IMAGE_BL31
+	el2_sysregs_t *el2_ctx = get_el2_sysregs_ctx(ctx);
+
+	/*
+	 * These bits are set in the gicv3 driver. Losing them (especially the
+	 * SRE bit) is problematic for all worlds. Henceforth recreate them.
+	 */
+	u_register_t icc_sre_el2_val = ICC_SRE_DIB_BIT | ICC_SRE_DFB_BIT |
+				   ICC_SRE_EN_BIT | ICC_SRE_SRE_BIT;
+	write_el2_ctx_common(el2_ctx, icc_sre_el2, icc_sre_el2_val);
+
+	/*
+	 * The actlr_el2 register can be initialized in platform's reset handler
+	 * and it may contain access control bits (e.g. CLUSTERPMUEN bit).
+	 */
+	write_el2_ctx_common(el2_ctx, actlr_el2, read_actlr_el2());
+
+	write_el2_ctx_common(el2_ctx, sctlr_el2, SCTLR_EL2_RES1);
+
+	/*
+	 * Initialize registers with known disabled init values.
+	 *
+	 * As their value is zeroed at init, there is a chance that this can
+	 * lead to unexpected behavior in lower ELs that do not initialise these
+	 * registers themselves.
+	 */
+	if (is_feat_hcx_supported()) {
+		write_el2_ctx_hcx(el2_ctx, hcrx_el2, HCRX_EL2_INIT_VAL);
+	}
+
+	if (is_feat_fgt_supported()) {
+		write_el2_ctx_fgt(el2_ctx, hfgitr_el2, HFGITR_EL2_INIT_VAL);
+		write_el2_ctx_fgt(el2_ctx, hfgrtr_el2, HFGRTR_EL2_INIT_VAL);
+		write_el2_ctx_fgt(el2_ctx, hfgwtr_el2, HFGWTR_EL2_INIT_VAL);
+	}
+#endif
+}
 
 /******************************************************************************
  * This function performs initializations that are specific to SECURE state
@@ -354,36 +399,6 @@ static void setup_ns_context(cpu_context_t *ctx, const struct entry_point_info *
 
 	write_ctx_reg(state, CTX_SCR_EL3, scr_el3);
 
-	/* Initialize EL2 context registers */
-#if (CTX_INCLUDE_EL2_REGS && IMAGE_BL31)
-	if (is_feat_hcx_supported()) {
-		/*
-		 * Initialize register HCRX_EL2 with its init value.
-		 * As the value of HCRX_EL2 is UNKNOWN on reset, there is a
-		 * chance that this can lead to unexpected behavior in lower
-		 * ELs that have not been updated since the introduction of
-		 * this feature if not properly initialized, especially when
-		 * it comes to those bits that enable/disable traps.
-		 */
-		write_el2_ctx_hcx(get_el2_sysregs_ctx(ctx), hcrx_el2,
-			HCRX_EL2_INIT_VAL);
-	}
-
-	if (is_feat_fgt_supported()) {
-		/*
-		 * Initialize HFG*_EL2 registers with a default value so legacy
-		 * systems unaware of FEAT_FGT do not get trapped due to their lack
-		 * of initialization for this feature.
-		 */
-		write_el2_ctx_fgt(get_el2_sysregs_ctx(ctx), hfgitr_el2,
-			HFGITR_EL2_INIT_VAL);
-		write_el2_ctx_fgt(get_el2_sysregs_ctx(ctx), hfgrtr_el2,
-			HFGRTR_EL2_INIT_VAL);
-		write_el2_ctx_fgt(get_el2_sysregs_ctx(ctx), hfgwtr_el2,
-			HFGWTR_EL2_INIT_VAL);
-	}
-#endif /* (CTX_INCLUDE_EL2_REGS && IMAGE_BL31) */
-
 	manage_extensions_nonsecure(ctx);
 }
 
@@ -421,30 +436,6 @@ static void setup_context_common(cpu_context_t *ctx, const entry_point_info_t *e
 
 	/* Clear any residual register values from the context */
 	zeromem(ctx, sizeof(*ctx));
-
-	/*
-	 * The lower-EL context is zeroed so that no stale values leak to a world.
-	 * It is assumed that an all-zero lower-EL context is good enough for it
-	 * to boot correctly. However, there are very few registers where this
-	 * is not true and some values need to be recreated.
-	 */
-#if (CTX_INCLUDE_EL2_REGS && IMAGE_BL31)
-	el2_sysregs_t *el2_ctx = get_el2_sysregs_ctx(ctx);
-
-	/*
-	 * These bits are set in the gicv3 driver. Losing them (especially the
-	 * SRE bit) is problematic for all worlds. Henceforth recreate them.
-	 */
-	u_register_t icc_sre_el2_val = ICC_SRE_DIB_BIT | ICC_SRE_DFB_BIT |
-				   ICC_SRE_EN_BIT | ICC_SRE_SRE_BIT;
-	write_el2_ctx_common(el2_ctx, icc_sre_el2, icc_sre_el2_val);
-
-	/*
-	 * The actlr_el2 register can be initialized in platform's reset handler
-	 * and it may contain access control bits (e.g. CLUSTERPMUEN bit).
-	 */
-	write_el2_ctx_common(el2_ctx, actlr_el2, read_actlr_el2());
-#endif /* (CTX_INCLUDE_EL2_REGS && IMAGE_BL31) */
 
 	/* Start with a clean SCR_EL3 copy as all relevant values are set */
 	scr_el3 = SCR_RESET_VAL;
@@ -638,14 +629,9 @@ static void setup_context_common(cpu_context_t *ctx, const entry_point_info_t *e
 	if (is_feat_idte3_supported()) {
 		idte3_enable(ctx);
 	}
-
-#if CTX_INCLUDE_EL2_REGS && IMAGE_BL31
-	/*
-	 * Initialize SCTLR_EL2 context register with reset value.
-	 */
-	write_el2_ctx_common(get_el2_sysregs_ctx(ctx), sctlr_el2, SCTLR_EL2_RES1);
-#endif /* CTX_INCLUDE_EL2_REGS */
 #endif /* IMAGE_BL31 */
+
+	setup_el2_context(ctx);
 
 	setup_el1_context(ctx, ep);
 
