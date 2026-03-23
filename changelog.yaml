@@ -565,6 +565,12 @@ subsections:
           - title: RB3Gen2
             scope: rb3gen2
 
+          - title: Lemans
+            scope: lemans
+
+          - title: Lemans EVK
+            scope: lemans_evk
+
       - title: Raspberry Pi
         scope: rpi
 
