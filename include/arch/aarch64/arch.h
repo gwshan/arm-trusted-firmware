@@ -1800,6 +1800,7 @@
 #define FGWTE3_EL3					S3_6_C1_C1_5
 
 /* FGWTE3_EL3 Defintions */
+#define FGWTE3_EL3_GPCBW_EL3_BIT			(U(1) << 22)
 #define FGWTE3_EL3_VBAR_EL3_BIT				(U(1) << 21)
 #define FGWTE3_EL3_TTBR0_EL3_BIT			(U(1) << 20)
 #define FGWTE3_EL3_TPIDR_EL3_BIT			(U(1) << 19)
@@ -1822,6 +1823,7 @@
 #define FGWTE3_EL3_ACTLR_EL3_BIT			(U(1) << 0)
 
 #define FGWTE3_EL3_EARLY_INIT_VAL			(	\
+		FGWTE3_EL3_GPCBW_EL3_BIT 		| 	\
 		FGWTE3_EL3_VBAR_EL3_BIT 		| 	\
 		FGWTE3_EL3_TTBR0_EL3_BIT 		|	\
 		FGWTE3_EL3_SPMROOTCR_EL3_BIT		|	\
