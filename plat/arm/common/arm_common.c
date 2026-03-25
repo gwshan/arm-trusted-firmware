@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2025, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -31,6 +31,13 @@
 
 /* Get ARM SOC-ID */
 #pragma weak plat_arm_get_soc_id
+
+#if USE_GIC_DRIVER == 3
+uintptr_t arm_gicr_base_addrs[2] = {
+	PLAT_ARM_GICR_BASE,	/* GICR Base address of the primary CPU */
+	0U			/* Zero Termination */
+};
+#endif
 
 /*******************************************************************************
  * Changes the memory attributes for the region of mapped memory where the BL

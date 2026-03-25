@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2013-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -143,22 +143,23 @@ void __no_pauth bl31_main(u_register_t arg0, u_register_t arg1, u_register_t arg
 	}
 #endif
 
+#if USE_GIC_DRIVER
+	/*
+	 * Initialize the GIC driver and this core's GIC interface before fully
+	 * setting up the platform. This allows early platform setup to
+	 * configure interrupts.
+	 */
+	gic_init(core_pos);
+	gic_pcpu_init(core_pos);
+	gic_cpuif_enable(core_pos);
+#endif /* USE_GIC_DRIVER */
+
 	/* Perform platform setup in BL31 */
 	bl31_platform_setup();
 
 #if USE_DSU_DRIVER
 	dsu_driver_init(&plat_dsu_data);
 #endif
-
-#if USE_GIC_DRIVER
-	/*
-	 * Initialize the GIC driver as well as per-cpu and global interfaces.
-	 * Platform has had an opportunity to initialise specifics.
-	 */
-	gic_init(core_pos);
-	gic_pcpu_init(core_pos);
-	gic_cpuif_enable(core_pos);
-#endif /* USE_GIC_DRIVER */
 
 	/* Initialise helper libraries */
 	bl31_lib_init();

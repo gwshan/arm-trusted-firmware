@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -107,6 +107,10 @@ void css_pwr_domain_on_finish(const psci_power_state_t *target_state)
 	assert(css_system_pwr_state(target_state) == ARM_LOCAL_STATE_RUN);
 
 	css_pwr_domain_on_finisher_common(target_state);
+}
+
+void plat_gic_pre_pcpu_init(unsigned int cpu_idx)
+{
 }
 
 /*******************************************************************************

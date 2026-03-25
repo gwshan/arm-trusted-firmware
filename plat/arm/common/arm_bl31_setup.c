@@ -30,13 +30,6 @@
 struct transfer_list_header *secure_tl;
 struct transfer_list_header *ns_tl __unused;
 
-#if USE_GIC_DRIVER == 3
-uintptr_t arm_gicr_base_addrs[2] = {
-	PLAT_ARM_GICR_BASE,	/* GICR Base address of the primary CPU */
-	0U			/* Zero Termination */
-};
-#endif
-
 /*
  * Placeholder variables for copying the arguments that have been passed to
  * BL31 from BL2.
@@ -392,37 +385,6 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
  ******************************************************************************/
 void arm_bl31_platform_setup(void)
 {
-	struct transfer_list_entry *te __unused;
-
-#if TRANSFER_LIST && !RESET_TO_BL31
-	ns_tl = transfer_list_init((void *)FW_NS_HANDOFF_BASE,
-				   PLAT_ARM_FW_HANDOFF_SIZE);
-	if (ns_tl == NULL) {
-		ERROR("Non-secure transfer list initialisation failed!\n");
-		panic();
-	}
-	/* BL31 may modify the HW_CONFIG so defer copying it until later. */
-	te = transfer_list_find(secure_tl, TL_TAG_FDT);
-	assert(te != NULL);
-
-	/* Populate HW_CONFIG device tree from transfer list entry */
-	fconf_populate("HW_CONFIG", (uintptr_t)transfer_list_entry_data(te));
-
-	te = transfer_list_add(ns_tl, TL_TAG_FDT, te->data_size,
-			       transfer_list_entry_data(te));
-	assert(te != NULL);
-
-	te = transfer_list_find(secure_tl, TL_TAG_TPM_EVLOG);
-	if (te != NULL) {
-		te = transfer_list_add(ns_tl, TL_TAG_TPM_EVLOG, te->data_size,
-				  transfer_list_entry_data(te));
-		if (te == NULL) {
-			ERROR("Failed to load event log in Non-Secure transfer list\n");
-			panic();
-		}
-	}
-#endif /* TRANSFER_LIST && !RESET_TO_BL31 */
-
 #if RESET_TO_BL31
 	/*
 	 * Do initial security configuration to allow DRAM/device access
@@ -531,10 +493,6 @@ void arm_free_init_memory(void)
 void __init bl31_platform_setup(void)
 {
 	arm_bl31_platform_setup();
-
-#if USE_GIC_DRIVER == 3
-	gic_set_gicr_frames(arm_gicr_base_addrs);
-#endif
 }
 
 void bl31_plat_runtime_setup(void)
@@ -597,9 +555,45 @@ void __init arm_bl31_plat_arch_setup(void)
 #endif /* ENABLE_RME */
 
 	arm_setup_romlib();
+
+	struct transfer_list_entry *te __unused;
+
+#if TRANSFER_LIST && !RESET_TO_BL31
+	ns_tl = transfer_list_init((void *)FW_NS_HANDOFF_BASE,
+				   PLAT_ARM_FW_HANDOFF_SIZE);
+	if (ns_tl == NULL) {
+		ERROR("Non-secure transfer list initialisation failed!\n");
+		panic();
+	}
+	/* BL31 may modify the HW_CONFIG so defer copying it until later. */
+	te = transfer_list_find(secure_tl, TL_TAG_FDT);
+	assert(te != NULL);
+
+	/* Populate HW_CONFIG device tree from transfer list entry */
+	fconf_populate("HW_CONFIG", (uintptr_t)transfer_list_entry_data(te));
+
+	te = transfer_list_add(ns_tl, TL_TAG_FDT, te->data_size,
+			       transfer_list_entry_data(te));
+	assert(te != NULL);
+
+	te = transfer_list_find(secure_tl, TL_TAG_TPM_EVLOG);
+	if (te != NULL) {
+		te = transfer_list_add(ns_tl, TL_TAG_TPM_EVLOG, te->data_size,
+				  transfer_list_entry_data(te));
+		if (te == NULL) {
+			ERROR("Failed to load event log in Non-Secure transfer list\n");
+			panic();
+		}
+	}
+#endif /* TRANSFER_LIST && !RESET_TO_BL31 */
+
 }
 
 void __init bl31_plat_arch_setup(void)
 {
 	arm_bl31_plat_arch_setup();
+
+#if USE_GIC_DRIVER == 3
+	gic_set_gicr_frames(arm_gicr_base_addrs);
+#endif
 }
