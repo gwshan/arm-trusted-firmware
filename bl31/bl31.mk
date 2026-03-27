@@ -208,6 +208,14 @@ ifeq ($(CROS_WIDEVINE_SMC),1)
 BL31_SOURCES		+=	services/oem/chromeos/widevine_smc_handlers.c
 endif
 
+ifeq (${FIRME_SUPPORT},1)
+BL31_SOURCES		+=	services/std_svc/firme/firme_main.c \
+				services/std_svc/firme/firme_base_service.c
+ifeq (${ENABLE_RME},1)
+BL31_SOURCES		+=	services/std_svc/firme/firme_granule_management_service.c
+endif
+endif
+
 BL31_DEFAULT_LINKER_SCRIPT_SOURCE := bl31/bl31.ld.S
 
 # CRYPTO_SUPPORT
@@ -231,6 +239,7 @@ $(eval $(call assert_booleans,\
     $(sort \
 	CRASH_REPORTING \
 	EL3_EXCEPTION_HANDLING \
+	FIRME_SUPPORT \
 	SDEI_SUPPORT \
 	USE_DSU_DRIVER \
 )))
@@ -247,4 +256,5 @@ $(eval $(call add_defines,\
 	EL3_EXCEPTION_HANDLING \
 	SDEI_SUPPORT \
 	USE_DSU_DRIVER \
+	FIRME_SUPPORT \
 )))

@@ -1578,6 +1578,8 @@ Common build options
    mode. When set to 0, TF-A will use the RMM-EL3 interface version required
    for RMMv2.0. Default value is 1.
 
+-  ``FIRME_SUPPORT``: This option enables the FIRME service in TF-A.
+
 -  ``RMMD_ENABLE_EL3_TOKEN_SIGN``: Numeric value to enable support for singing
    realm attestation token signing requests in EL3. This flag can take the
    values 0 and 1. The default value is ``0``. When set to ``1``, this option

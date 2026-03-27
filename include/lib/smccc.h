@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2016-2026, Arm Limited and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -160,11 +160,11 @@
 					  == SMC_FROM_SECURE)
 #define is_caller_realm(_f)		(((_f) & SMC_FROM_MASK) \
 					  == SMC_FROM_REALM)
-#define caller_sec_state(_f)		((_f) & SMC_FROM_MASK)
 #else /* ENABLE_RME */
 #define is_caller_non_secure(_f)	(((_f) & SMC_FROM_NON_SECURE) != U(0))
 #define is_caller_secure(_f)		(!is_caller_non_secure(_f))
 #endif /* ENABLE_RME */
+#define caller_sec_state(_f)		((_f) & SMC_FROM_MASK)
 
 #define is_sve_hint_set(_f)		(((_f) & (FUNCID_SVE_HINT_MASK \
 						<< FUNCID_SVE_HINT_SHIFT)) != U(0))

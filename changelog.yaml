@@ -808,6 +808,9 @@ subsections:
       - title: DRTM
         scope: drtm
 
+      - title: FIRME
+        scope: firme
+
       - title: TRNG
         scope: trng
 

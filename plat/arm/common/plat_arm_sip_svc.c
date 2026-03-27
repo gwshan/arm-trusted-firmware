@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024, Arm Limited. All rights reserved.
+ * Copyright (c) 2023-2026, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -30,6 +30,7 @@ static uint64_t plat_protect_memory(bool protect,
 {
 	uint64_t ret = SMC_INVALID_PARAM;
 	uint64_t last_updated = 0;
+	uint64_t granule_count;
 
 	if (!secure_origin) {
 		SMC_RET1(handle, SMC_UNK);
@@ -54,11 +55,16 @@ static uint64_t plat_protect_memory(bool protect,
 		 * If protect is true, add memory to secure PAS.
 		 * Else unprotect it, making part of non-secure PAS.
 		 */
-		ret = protect
-			? gpt_delegate_pas(it, PAGE_SIZE_4KB,
-					   SMC_FROM_SECURE)
-			: gpt_undelegate_pas(it, PAGE_SIZE_4KB,
-					     SMC_FROM_SECURE);
+		granule_count = 1;
+
+		if (protect) {
+			ret = gpt_transition_pas(it, &granule_count,
+						 GPT_GPI_SECURE,
+						 SMC_FROM_SECURE);
+		} else {
+			ret = gpt_transition_pas(it, &granule_count, GPT_GPI_NS,
+						 SMC_FROM_SECURE);
+		}
 
 		switch (ret) {
 		case 0:

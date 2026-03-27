@@ -233,6 +233,10 @@ ifeq ($(FEATURE_DETECTION),1)
         $(info FEATURE_DETECTION is an experimental feature)
 endif #(FEATURE_DETECTION)
 
+ifeq ($(FIRME_SUPPORT),1)
+        $(info FIRME_SUPPORT is an experimental feature)
+endif #(FIRME_SUPPORT)
+
 ifneq ($(ENABLE_SME2_FOR_NS), 0)
 	ifeq (${ENABLE_SME_FOR_NS}, 0)
                 $(warning "ENABLE_SME2_FOR_NS requires ENABLE_SME_FOR_NS also \
