@@ -65,19 +65,6 @@ int psci_cpu_suspend(unsigned int power_state,
 	plat_local_state_t cpu_pd_state;
 	unsigned int cpu_idx = plat_my_core_pos();
 
-#if ERRATA_SME_POWER_DOWN
-	/*
-	 * If SME isn't off, attempting a real power down will only end up being
-	 * rejected. If we got called with SME on, fall back to a normal
-	 * suspend. We can't force SME off as in the event the power down is
-	 * rejected for another reason (eg GIC) we'd lose the SME context.
-	 */
-	if (is_feat_sme_supported() && read_svcr() != 0) {
-		power_state &= ~(PSTATE_TYPE_MASK << PSTATE_TYPE_SHIFT);
-		power_state &= ~(PSTATE_PWR_LVL_MASK << PSTATE_PWR_LVL_SHIFT);
-	}
-#endif /* ERRATA_SME_POWER_DOWN */
-
 	/* Validate the power_state parameter */
 	rc = psci_validate_power_state(power_state, &state_info);
 	if (rc != PSCI_E_SUCCESS) {
