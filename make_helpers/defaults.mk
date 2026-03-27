@@ -453,7 +453,7 @@ RMMD_ENABLE_EL3_TOKEN_SIGN	:= 0
 RMMD_ENABLE_IDE_KEY_PROG	:= 0
 
 # Enable RMM v1.x compatibility mode
-RMM_V1_COMPAT			:= 1
+RMM_V1_COMPAT			:= 0
 
 # Live firmware activation support
 LFA_SUPPORT			:= 0
