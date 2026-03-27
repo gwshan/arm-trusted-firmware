@@ -42,9 +42,9 @@ Build and integration
 FIRME support in TF-A is experimental:
 
 - ``FIRME_SUPPORT`` enables support in builds.
-- ``ENABLE_RME=1`` and ``FIRME_SUPPORT=1`` are required to make use of the
-  granule management service.
-- When FIRME support is enabled in a Realm-enabled build, TRP uses
+- When build with ``FIRME_SUPPORT``, RME supported system will make use of the
+  FIRME granule management services.
+- When FIRME support is enabled in a RMM enabled build, TRP uses
   ``FIRME_GM_GPI_SET`` for granule transitions instead of the legacy
   delegate/undelegate interface.
 

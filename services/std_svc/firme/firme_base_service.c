@@ -39,13 +39,11 @@ static uint64_t firme_base_get_feat_reg_1(firme_instance_e instance)
 	firme_service_info_t *info __unused;
 	uint64_t reg = base_info.feature_reg[1];
 
-#if ENABLE_RME
 	info = firme_granule_mgmt_service_get_info();
 	if ((info != NULL) &&
 	    ((info->instance_support & BIT(instance)) != 0U)) {
 		reg |= FIRME_BASE_SERVICE_GRANULE_MGMT_BIT;
 	}
-#endif
 
 	return reg;
 }
@@ -63,11 +61,9 @@ static int32_t get_firme_service_version(firme_instance_e instance,
 	case FIRME_BASE_ID:
 		info = &base_info;
 		break;
-#if ENABLE_RME
 	case FIRME_GRANULE_MGMT_ID:
 		info = firme_granule_mgmt_service_get_info();
 		break;
-#endif
 	default:
 		return FIRME_NOT_SUPPORTED;
 	}
@@ -100,11 +96,9 @@ static int32_t get_firme_feature_reg(uint64_t *reg, firme_instance_e instance,
 			return FIRME_SUCCESS;
 		}
 		break;
-#if ENABLE_RME
 	case FIRME_GRANULE_MGMT_ID:
 		info = firme_granule_mgmt_service_get_info();
 		break;
-#endif
 	}
 
 	if ((info != NULL) && (reg_index < info->num_feature_regs) &&
