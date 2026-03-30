@@ -347,6 +347,8 @@ ifeq (${ENABLE_RME},1)
 
 	# RME enables CSV2_2 extension by default.
 	ENABLE_FEAT_CSV2_2 = 1
+	# Enable FIRME interface for CCA.
+	FIRME_SUPPORT := 1
 endif #(FEAT_RME)
 
 ################################################################################
