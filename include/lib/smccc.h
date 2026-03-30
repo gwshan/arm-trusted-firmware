@@ -122,6 +122,10 @@
 #define SMC_ARCH_CALL_NOT_REQUIRED	-2
 #define SMC_ARCH_CALL_INVAL_PARAM	-3
 
+/* Return codes for SMCCC_ARCH_WORKAROUND_X family of calls */
+#define SMC_WA_DO			0
+#define SMC_WA_DO_NOT			1
+
 /*
  * Various flags passed to SMC handlers
  *
