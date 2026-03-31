@@ -156,6 +156,8 @@
 #define CONTEXTIDR_EL2		S3_4_C13_C0_1
 #define TTBR1_EL2		S3_4_C2_C0_1
 
+#define HAFGRTR_EL2_INIT_VAL	ULL(0)
+
 /*******************************************************************************
  * Generic timer memory mapped registers & offsets
  ******************************************************************************/
@@ -1681,6 +1683,8 @@
  ******************************************************************************/
 #define TCR2_EL1		S3_0_C2_C0_3
 #define TCR2_EL2		S3_4_C2_C0_3
+
+#define TCR2_EL2_INIT_VAL	ULL(0)
 
 /*******************************************************************************
  * Permission indirection and overlay Registers
