@@ -309,6 +309,10 @@ void trp_rmi_handler(unsigned long fid,
 	case RMI_RMM_PDEV_CREATE:
 		trp_ide_keymgmt_interface_fn(x1, x2, smc_ret);
 		break;
+	case RMI_RMM_CONFIG_SET:
+	case RMI_RMM_CONFIG_GET:
+		smc_ret->x[0] = RMI_SUCCESS;
+		break;
 	default:
 		ERROR("Invalid SMC code to %s, FID %lx\n", __func__, fid);
 		smc_ret->x[0] = SMC_UNK;
