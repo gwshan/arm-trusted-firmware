@@ -8,6 +8,7 @@
 #include <arch_helpers.h>
 #include <common/bl_common.h>
 #include <common/debug.h>
+#include <errno.h>
 #include <lib/mmio.h>
 #include <lib/xlat_tables/xlat_tables_v2.h>
 #include <ti_sci_transport.h>
@@ -18,6 +19,7 @@
 #include <k3_console.h>
 #include <plat_private.h>
 #include <platform_def.h>
+#include <plat/common/platform.h>
 
 #define WKUP_BOOT_MODE (0x43010030)
 #define MAIN_PLL_MMR_BASE (0x04060000UL)
@@ -193,4 +195,10 @@ void bl1_platform_setup(void)
 
 void platform_mem_init(void)
 {
+}
+
+int plat_get_image_source(unsigned int image_id, uintptr_t *dev_handle,
+			  uintptr_t *image_spec)
+{
+	return -ENOTSUP;
 }
