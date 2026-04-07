@@ -95,6 +95,11 @@ void bl1_early_platform_setup(void)
 	uint32_t device_id;
 	uint32_t speed_grade;
 
+#if DEBUG
+	ERROR("AM62L k3low BL1: DEBUG builds are not supported on this platform!\n");
+	panic();
+#endif
+
 	board_init();
 	/* Read OPN and set the A53 clock rate */
 	device_id = mmio_read_32(WKUP_JTAG_DEVICE_ID);

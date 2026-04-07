@@ -27,6 +27,25 @@ $(eval $(call add_define,AM62L_DDR_RAM_SIZE))
 
 USE_COHERENT_MEM := 0
 
+ifeq ($(DEBUG),1)
+$(warning )
+$(warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+$(warning !! AM62L DEBUG BUILD: THIS BINARY WILL NOT BOOT                      !!)
+$(warning !!                                                                    !!)
+$(warning !! WHY: BL1's RW region (12K) is too small for debug xlat tables.   !!)
+$(warning !!   As a workaround BL1_RW_LIMIT is extended by 4K, which causes   !!)
+$(warning !!   it to overlap MAILBOX_SHMEM. The IPC channel is corrupted       !!)
+$(warning !!   and BL1 cannot hand off to the next stage.                      !!)
+$(warning !!                                                                    !!)
+$(warning !! If you want logs from a booting system, use LOG_LEVEL instead:    !!)
+$(warning !!   make ... LOG_LEVEL=40          # INFO  (default for release)    !!)
+$(warning !!   make ... LOG_LEVEL=50          # NOTICE+INFO+WARNING            !!)
+$(warning !!                                                                    !!)
+$(warning !! DEBUG=1 is only useful here for compiler analysis / symbol dumps. !!)
+$(warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+$(warning )
+endif
+
 # modify BUILD_PLAT to point to board specific build directory
 BUILD_PLAT := $(abspath ${BUILD_BASE})/${PLAT}/${TARGET_BOARD}/${BUILD_TYPE}
 
