@@ -24,7 +24,15 @@
 #define BL1_RO_LIMIT	0x7080BFFF /* end of readonly segment */
 
 #define	BL1_RW_BASE	0x7080D000 /* RW segment for data, stack and others */
+#ifdef DEBUG
+/*
+ * HACK: Extended by 4K for debug builds to fit larger xlat tables.
+ * This build is NOT FUNCTIONAL - do not use in production.
+ */
+#define	BL1_RW_LIMIT	0x70811000 /* end of RW segment (debug: +4K hack) */
+#else
 #define	BL1_RW_LIMIT	0x70810000 /* end of RW segment */
+#endif
 
 #define BL2_BASE	0x80000000 /* BL2 base at start of DDR memory */
 #define BL2_LIMIT	0x100000000 /* BL2 limit */
