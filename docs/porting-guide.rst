@@ -753,6 +753,27 @@ Note that for platforms that can't release secondary CPUs out of reset, only the
 primary CPU will execute the cold boot code. Therefore, implementing this
 function is not required on such platforms.
 
+Generic hold pen helpers
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+When ``COLD_BOOT_SINGLE_CPU`` is not set, TF-A provides a generic hold pen
+implementation that platforms can use for SMP secondary CPU bring-up. Each
+core gets a cache-line-aligned slot containing an entry field and two magic
+tags, avoiding common pitfalls with cache coherency during the boot handshake
+between primary and secondary CPUs.
+
+The C API consists of ``plat_hold_pen_init()``, to be called during platform
+setup (typically from ``plat_setup_psci_ops()``), ``plat_hold_pen_signal()``
+to be called from ``pwr_domain_on()``, and the assembly macro
+``plat_hold_pen_wait_and_jump`` to be used by waking cores, usually from
+``plat_secondary_cold_boot_setup()``. Detailed documentation for each is in
+``include/plat/common/plat_hold_pen.h`` and
+``include/plat/common/plat_hold_pen.S``. See
+``plat/arm/board/corstone1000/`` and ``plat/qemu/`` for usage examples.
+
+Platforms using this helper must add ``plat/common/plat_hold_pen.c`` to
+``BL31_SOURCES``.
+
 Function : plat_is_my_cpu_primary() [mandatory when COLD_BOOT_SINGLE_CPU == 0]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
