@@ -372,7 +372,11 @@ static void *rmmd_cpu_on_finish_handler(const void *arg)
 	uint32_t linear_id = plat_my_core_pos();
 	rmmd_rmm_context_t *ctx = PER_CPU_CUR(rmm_context);
 	/* Create a local copy of ep info to avoid race conditions */
-	entry_point_info_t local_rmm_ep_info = *rmm_ep_info;
+	entry_point_info_t local_rmm_ep_info;
+
+	if (!is_feat_rme_supported()) {
+		return NULL;
+	}
 
 	if (rmm_boot_failed) {
 		/* RMM Boot failed on a previous CPU. Abort. */
@@ -387,6 +391,7 @@ static void *rmmd_cpu_on_finish_handler(const void *arg)
 	 * arg1: opaque activation token, as returned by previous calls
 	 * arg2 to arg3: Not used.
 	 */
+	local_rmm_ep_info = *rmm_ep_info;
 	local_rmm_ep_info.args.arg0 = linear_id;
 	local_rmm_ep_info.args.arg1 = ctx->activation_token;
 	local_rmm_ep_info.args.arg2 = 0ULL;

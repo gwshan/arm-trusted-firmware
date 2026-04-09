@@ -2279,7 +2279,7 @@ state. This function must return a pointer to the ``entry_point_info`` structure
 (that was copied during ``bl31_early_platform_setup()``) if the image exists. It
 should return NULL otherwise.
 
-Function : plat_rmmd_get_cca_attest_token() [mandatory when ENABLE_RME == 1]
+Function : plat_rmmd_get_cca_attest_token() [mandatory when ENABLE_RMM == 1]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
@@ -2314,7 +2314,7 @@ The parameters of the function are:
 The function returns 0 on success, -EINVAL on failure and -EAGAIN if the
 resource associated with the platform token retrieval is busy.
 
-Function : plat_rmmd_get_cca_realm_attest_key() [mandatory when ENABLE_RME == 1]
+Function : plat_rmmd_get_cca_realm_attest_key() [mandatory when ENABLE_RMM == 1]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
@@ -2340,7 +2340,7 @@ The parameters of the function are:
 
 The function returns 0 on success, -EINVAL on failure.
 
-Function : plat_rmmd_get_el3_rmm_shared_mem() [when ENABLE_RME == 1]
+Function : plat_rmmd_get_el3_rmm_shared_mem() [when ENABLE_RMM == 1]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
@@ -2352,7 +2352,7 @@ This function returns the size of the shared area between EL3 and RMM (or 0 on
 failure). A pointer to the shared area (or a NULL pointer on failure) is stored
 in the pointer passed as argument.
 
-Function : plat_rmmd_load_manifest() [when ENABLE_RME == 1]
+Function : plat_rmmd_load_manifest() [when ENABLE_RMM == 1]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
@@ -2360,12 +2360,12 @@ Function : plat_rmmd_load_manifest() [when ENABLE_RME == 1]
     Arguments : rmm_manifest_t *manifest
     Return    : int
 
-When ENABLE_RME is enabled, this function populates a boot manifest for the
+When ENABLE_RMM is enabled, this function populates a boot manifest for the
 RMM image and stores it in the area specified by manifest.
 
-When ENABLE_RME is disabled, this function is not used.
+When ENABLE_RMM is disabled, this function is not used.
 
-Function : plat_rmmd_mecid_key_update() [when ENABLE_RME == 1]
+Function : plat_rmmd_mecid_key_update() [when ENABLE_RMM == 1]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
@@ -2384,7 +2384,7 @@ Return value is 0 upon success and -EFAULT otherwise.
 
 This function needs to be implemented by a platform if it enables RME.
 
-Function : plat_rmmd_reserve_memory() [when ENABLE_RME == 1]
+Function : plat_rmmd_reserve_memory() [when ENABLE_RMM == 1]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::

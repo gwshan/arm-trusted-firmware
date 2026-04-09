@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <stdint.h>
 
+#include <arch_features.h>
 #include <common/debug.h>
 #include <common/runtime_svc.h>
 #include <lib/el3_runtime/cpu_data.h>
@@ -66,8 +67,8 @@ static int32_t std_svc_setup(void)
 	}
 #endif
 
-#if ENABLE_RME
-	if (rmmd_setup() != 0) {
+#if ENABLE_RMM
+	if (is_feat_rme_supported() && (rmmd_setup() != 0)) {
 		WARN("RMMD setup failed. Continuing boot.\n");
 	}
 #endif
@@ -201,7 +202,7 @@ static uintptr_t std_svc_smc_handler(uint32_t smc_fid,
 	}
 #endif /* ERRATA_ABI_SUPPORT */
 
-#if ENABLE_RME
+#if ENABLE_RMM
 
 	if (is_rmmd_el3_fid(smc_fid)) {
 		return rmmd_rmm_el3_handler(smc_fid, x1, x2, x3, x4, cookie,

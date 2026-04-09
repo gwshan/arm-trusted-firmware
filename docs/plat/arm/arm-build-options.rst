@@ -148,8 +148,7 @@ Arm FVP Build Options
 ---------------------
 
 - ``FVP_TRUSTED_SRAM_SIZE``: Size (in kilobytes) of the Trusted SRAM region to
-  utilize when building for the FVP platform. This option defaults to 256 with
-  build option ENABLE_RME=0 and 384 for ENABLE_RME=1.
+  utilize when building for the FVP platform. This option defaults to 384.
 
 Arm Juno Build Options
 ----------------------

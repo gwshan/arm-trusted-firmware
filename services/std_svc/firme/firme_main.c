@@ -109,13 +109,12 @@ uint64_t firme_handler(uint32_t smc_fid, uint64_t x1, uint64_t x2, uint64_t x3,
 		return firme_base_service_handler(instance, smc_fid, x1, x2, x3,
 						  x4, cookie, handle, flags);
 	}
-#if ENABLE_RME
+
 	else if (is_granule_mgmt_service_fid(smc_fid)) {
 		return firme_granule_mgmt_service_handler(instance, smc_fid, x1,
 							  x2, x3, x4, cookie,
 							  handle, flags);
 	}
-#endif
 
 	else if (is_ide_key_mgmt_service_fid(smc_fid)) {
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2024, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2015-2025, Arm Limited and Contributors. All rights reserved.
  * Copyright (c) 2026, BayLibre SAS
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -329,7 +329,7 @@
 #define MAX_XLAT_TABLES_SPMC		0
 #endif
 
-#if ENABLE_RME
+#if ENABLE_FEAT_RME
 
 /*
  * Reserve some space at the end of secure DRAM for the Granule Protection
@@ -354,6 +354,7 @@ CASSERT((PLAT_QEMU_L0_GPT_BASE & (PLAT_QEMU_L0_GPT_SIZE - 1)) == 0,
 #endif
 
 /* Reserved some DRAM space for RMM (24MB) */
+#if ENABLE_RMM
 #define REALM_DRAM_BASE			(NS_DRAM0_BASE + PLAT_QEMU_DT_MAX_SIZE)
 #define REALM_DRAM_SIZE			0x01800000
 
@@ -365,15 +366,6 @@ CASSERT((PLAT_QEMU_L0_GPT_BASE & (PLAT_QEMU_L0_GPT_SIZE - 1)) == 0,
 #define RMM_SHARED_BASE			(RMM_LIMIT)
 #define RMM_SHARED_SIZE			PLAT_QEMU_RMM_SHARED_SIZE
 
-#define MAP_GPT_L0_REGION	MAP_REGION_FLAT(			\
-					PLAT_QEMU_L0_GPT_BASE,		\
-					PLAT_QEMU_L0_GPT_SIZE,		\
-					MT_MEMORY | MT_RW | EL3_PAS)
-
-#define MAP_GPT_L1_REGION	MAP_REGION_FLAT(			\
-					PLAT_QEMU_L1_GPT_BASE,		\
-					PLAT_QEMU_L1_GPT_SIZE,		\
-					MT_MEMORY | MT_RW | EL3_PAS)
 /*
  * We add the RMM_SHARED size to RMM mapping to map the region as a block.
  * Else we end up requiring more pagetables in BL2 for ROMLIB build.
@@ -388,10 +380,21 @@ CASSERT((PLAT_QEMU_L0_GPT_BASE & (PLAT_QEMU_L0_GPT_SIZE - 1)) == 0,
 					RMM_SHARED_BASE,		\
 					RMM_SHARED_SIZE,		\
 					MT_MEMORY | MT_RW | MT_REALM)
-#else /* !ENABLE_RME */
+#endif /* ENABLE_RMM */
+
+#define MAP_GPT_L0_REGION	MAP_REGION_FLAT(			\
+					PLAT_QEMU_L0_GPT_BASE,		\
+					PLAT_QEMU_L0_GPT_SIZE,		\
+					MT_MEMORY | MT_RW | EL3_PAS)
+
+#define MAP_GPT_L1_REGION	MAP_REGION_FLAT(			\
+					PLAT_QEMU_L1_GPT_BASE,		\
+					PLAT_QEMU_L1_GPT_SIZE,		\
+					MT_MEMORY | MT_RW | EL3_PAS)
+#else /* !ENABLE_FEAT_RME */
 
 #define RME_GPT_DRAM_SIZE		0
 
-#endif /* ENABLE_RME */
+#endif /* ENABLE_FEAT_RME */
 
 #endif /* PLATFORM_DEF_H */

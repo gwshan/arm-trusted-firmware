@@ -24,8 +24,12 @@
 static firme_service_info_t granule_mgmt_info = {
 	.version = FIRME_VERSION(FIRME_GRANULE_MGMT_VERSION_MAJOR,
 				 FIRME_GRANULE_MGMT_VERSION_MINOR),
+#if ENABLE_RMM
 	.instance_support =
 		(BIT(FIRME_SECURE) | BIT(FIRME_NONSECURE) | BIT(FIRME_REALM)),
+#else
+	.instance_support = (BIT(FIRME_SECURE) | BIT(FIRME_NONSECURE)),
+#endif
 	.num_feature_regs = 2,
 	.feature_reg = { FEAT_REG_0_DEFAULT, FEAT_REG_1_DEFAULT },
 };
@@ -33,7 +37,17 @@ static firme_service_info_t granule_mgmt_info = {
 firme_service_info_t *firme_granule_mgmt_service_get_info(void)
 {
 	/* Build feat reg 1 value from GPCCR value. */
-	uint64_t gpccr = read_gpccr_el3();
+	uint64_t gpccr;
+
+	if (!is_feat_rme_supported()) {
+		return NULL;
+	}
+
+	/*
+	 * todo: FIRME must have a init routine to perform one time
+	 * initialization during boot for all supported services.
+	 */
+	gpccr = read_gpccr_el3();
 
 	granule_mgmt_info.feature_reg[1] |=
 		((gpccr >> GPCCR_PGS_SHIFT) & GPCCR_PGS_MASK)
@@ -54,6 +68,10 @@ u_register_t firme_granule_mgmt_service_handler(firme_instance_e instance,
 						uint64_t x4, void *cookie,
 						void *handle, uint64_t flags)
 {
+	if (!is_feat_rme_supported()) {
+		SMC_RET1(handle, FIRME_NOT_SUPPORTED);
+	}
+
 	switch (smc_fid) {
 	case FIRME_GM_GPI_SET_FID:
 		/* Extract target GPI value from attributes in x3. */

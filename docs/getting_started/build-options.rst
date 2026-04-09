@@ -105,7 +105,7 @@ Common build options
    file that contains the BL32 private key in PEM format or a PKCS11 URI. If
    ``SAVE_KEYS=1``, only a file is accepted and it will be used to save the key.
 
--  ``RMM``: This is an optional build option used when ``ENABLE_RME`` is set.
+-  ``RMM``: This is an optional build option used when ``ENABLE_RMM`` is set.
    It specifies the path to RMM binary for the ``fip`` target. If the RMM option
    is not specified, TF-A builds the TRP to load and run at R-EL2.
 
@@ -1026,14 +1026,14 @@ Common build options
    entrypoint) or 1 (CPU reset to SP_MIN entrypoint). The default value is 0.
 
 -  ``RME_GPT_BITLOCK_BLOCK``: This defines the block size (in number of 512MB
--  blocks) covered by a single bit of the bitlock structure during RME GPT
--  operations. The lower the block size, the better opportunity for
--  parallelising GPT operations but at the cost of more bits being needed
--  for the bitlock structure. This numeric parameter can take the values
--  from 0 to 512 and must be a power of 2. The value of 0 is special and
--  and it chooses a single spinlock for all GPT L1 table entries. Default
--  value is 1 which corresponds to block size of 512MB per bit of bitlock
--  structure.
+   blocks) covered by a single bit of the bitlock structure during RME GPT
+   operations. The lower the block size, the better opportunity for
+   parallelising GPT operations but at the cost of more bits being needed
+   for the bitlock structure. This numeric parameter can take the values
+   from 0 to 512 and must be a power of 2. The value of 0 is special and
+   and it chooses a single spinlock for all GPT L1 table entries. Default
+   value is 1 which corresponds to block size of 512MB per bit of bitlock
+   structure.
 
 -  ``RME_GPT_MAX_BLOCK``: Numeric value in MB to define the maximum size of
    supported contiguous blocks in GPT Library. This parameter can take the
@@ -1558,9 +1558,25 @@ Common build options
    be used and for the platforms which use ``RESET_TO_BL31`` platform owners
    should have mechanism to authenticate BL31. This option defaults to 0.
 
--  ``ENABLE_RME``: Numeric value to enable support for the ARMv9 Realm
+-  ``ENABLE_RMM``: Boolean flag to enable the Realm-EL2 payload (RMM).
+   This will take care of loading and initialising an image in Realm-EL2, and
+   will at runtime dispatch calls from non-secure world to the RMM, if
+   applicable.
+   Default value is 0. Setting this flag implies that RMM must be enabled
+   therefore, it mandates ``ENABLE_FEAT_RME`` to 1.
+
+-  ``ENABLE_FEAT_RME``: Numeric value to enable support for the ARMv9 Realm
    Management Extension. This flag can take the values 0 to 2, to align with
    the ``ENABLE_FEAT`` mechanism. Default value is 0.
+   This flag solely controls the architectural bits of RME, to let TF-A run
+   in the "root" physical address space and this will setup Granule Protection
+   Tables (GPT). Also this will make BL2 run in EL3, so it has access to the new
+   root address space. For deploying a Realm-EL2 payload (RMM), also set
+   ``ENABLE_RMM`` and provide an RMM image file.
+
+-  ``ENABLE_RME``: This options will be deprecated. Please use
+   ``ENABLE_FEAT_RME``. Until deprecated, setting this option to 1, will also
+   set ``ENABLE_FEAT_RME`` and ``ENABLE_RMM`` to 1.
 
 -  ``ENABLE_FEAT_MEC``: Numeric value to enable support for the ARMv9.2 Memory
    Encryption Contexts (MEC). This flag can take the values 0 to 2, to align

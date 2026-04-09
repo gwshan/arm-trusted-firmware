@@ -19,8 +19,8 @@
 
 #include "gpt_rme_private.h"
 
-#if !ENABLE_RME
-#error "ENABLE_RME must be enabled to use the GPT library"
+#if !ENABLE_FEAT_RME
+#error "ENABLE_FEAT_RME must be enabled to use the GPT library"
 #endif
 
 /*
@@ -331,7 +331,9 @@ static bool is_gpi_valid(unsigned int gpi)
 	case GPT_GPI_SECURE:
 	case GPT_GPI_NS:
 	case GPT_GPI_ROOT:
+#if ENABLE_RMM
 	case GPT_GPI_REALM:
+#endif
 	case GPT_GPI_ANY:
 		return true;
 	case GPT_GPI_NSO:
