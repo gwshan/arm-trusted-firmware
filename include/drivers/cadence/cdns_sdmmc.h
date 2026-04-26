@@ -12,6 +12,8 @@
 #include <drivers/cadence/cdns_combo_phy.h>
 #include <drivers/mmc.h>
 
+#include <platform_def.h>
+
 #if MMC_DEVICE_TYPE == 0
 #define CONFIG_DMA_ADDR_T_64BIT			0
 #endif
