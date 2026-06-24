@@ -198,7 +198,6 @@ PLAT_BL_COMMON_SOURCES		+=	drivers/clk/clk.c				\
 					plat/st/common/stm32mp_dt.c
 
 BL2_SOURCES			+=	${FCONF_SOURCES} ${FCONF_DYN_SOURCES}
-BL2_SOURCES			+=	$(ZLIB_SOURCES)
 
 BL2_SOURCES			+=	drivers/io/io_fip.c				\
 					plat/st/common/bl2_io_storage.c			\
