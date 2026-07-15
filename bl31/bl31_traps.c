@@ -113,7 +113,7 @@ int handle_sysreg_trap(uint64_t esr_el3, cpu_context_t *ctx, u_register_t flags)
  * The code here is based on pseudocode described in the Arm ARM (DDI0487). They
  * can also be found in the Arm A-profile A64 Instruction Set Architecture
  * document (DDI0602) available at
- * https://developer.arm.com/documentation/ddi0602/latest/.
+ * https://support.arm.com/documentation/ddi0602/latest/Shared-Pseudocode.
  *
  * NOTE: This piece of code must be reviewed every release against the latest
  * sequence to ensure that we keep up with new arch features.
