@@ -668,6 +668,8 @@ $(call assert_booleans,\
 	TEST_IO_SHORT_READ_FI \
 	SDEI_SUPPORT \
 	SMC_PCI_SUPPORT \
+	FIRME_SUPPORT \
+	FIRME_SUPPORT_IDE_KM \
 ))
 
 # Numeric_Flags
@@ -960,6 +962,8 @@ $(call add_defines,\
 	SDEI_SUPPORT \
 	USE_GIC_DRIVER \
 	SMC_PCI_SUPPORT \
+	FIRME_SUPPORT \
+	FIRME_SUPPORT_IDE_KM \
 ))
 
 ifeq (${PLATFORM_REPORT_CTX_MEM_USE}, 1)
