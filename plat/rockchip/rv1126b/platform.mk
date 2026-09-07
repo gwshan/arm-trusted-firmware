@@ -70,7 +70,6 @@ BL31_SOURCES		+=	${RK_GIC_SOURCES}				\
 				drivers/scmi-msg/smt.c				\
 				lib/cpus/aarch64/cortex_a53.S			\
 				$(LIBFDT_SRCS)					\
-				$(ZLIB_SOURCES)					\
 				${RK_PLAT_COMMON}/aarch64/plat_helpers.S	\
 				${RK_PLAT_COMMON}/aarch64/platform_common.c	\
 				${RK_PLAT_COMMON}/bl31_plat_setup.c		\
