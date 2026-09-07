@@ -26,7 +26,7 @@ int handle_sysreg_trap(uint64_t esr_el3, cpu_context_t *ctx, u_register_t flags)
 {
 	uint64_t opcode = EXTRACT(ESR_ISS, esr_el3) & ~(MASK(ISS_SYS64_DIR) | MASK(ISS_SYS64_RT));
 	uint8_t rt = EXTRACT(ISS_SYS64_RT, esr_el3);
-	bool is_read = EXTRACT(ISS_SYS64_DIR, opcode);
+	bool is_read = EXTRACT(ISS_SYS64_DIR, esr_el3);
 
 	if (is_feat_idte3_supported() &&
 	    ((opcode >= ISS_SYSREG_OPCODE_IDREG_MIN &&
