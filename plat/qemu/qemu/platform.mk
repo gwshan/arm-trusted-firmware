@@ -175,6 +175,10 @@ BL31_SOURCES		+=	plat/common/plat_spmd_manifest.c	\
 				${FDT_WRAPPERS_SOURCES}
 endif
 
+ifeq (${ENABLE_RMM},1)
+BL31_SOURCES		+=	${PLAT_QEMU_PATH}/plat_rmm_mem_carveout.c
+endif
+
 ifneq (${ENABLE_FEAT_RNG_TRAP},0)
 BL31_SOURCES		+=	plat/qemu/qemu/qemu_sync_traps.c
 endif
